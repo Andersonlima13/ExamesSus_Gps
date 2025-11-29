@@ -4,6 +4,8 @@ import Footer from '../components/Footer';
 import Button from '../components/Button';
 import Input from '../components/Input';
 import './Login.css';
+import Exame from './Exame';
+import ServerContext from './ServerContext';
 
 export default function Login(){
   const [mode, setMode] = useState('cidadao');
@@ -11,6 +13,8 @@ export default function Login(){
   const [serverId, setServerId] = useState('');
   const [name, setName] = useState('');
   const [unit, setUnit] = useState('');
+  const [serverLogged, setServerLogged] = useState(false);
+  const [serverData, setServerData] = useState(null);
 
   function submitCidadao(e){
     e.preventDefault();
@@ -18,7 +22,21 @@ export default function Login(){
   }
   function submitServidor(e){
     e.preventDefault();
-    alert('Entrando como Servidor: '+serverId+' - '+name+' - '+unit);
+    // mock: aceita qualquer id/nome/unidade preenchidos
+    if(serverId && name && unit){
+      setServerData({ id: serverId, nome: name, unidade: unit });
+      setServerLogged(true);
+    } else {
+      alert('Preencha todos os campos do servidor.');
+    }
+  }
+
+  if(serverLogged && serverData){
+    return (
+      <ServerContext.Provider value={serverData}>
+        <Exame />
+      </ServerContext.Provider>
+    );
   }
 
   return (
@@ -51,8 +69,9 @@ export default function Login(){
                 <label className="form-label">Unidade de Saúde</label>
                 <select className="form-input" value={unit} onChange={e=>setUnit(e.target.value)}>
                   <option value="">Selecione sua unidade</option>
-                  <option value="1">Centro de Saúde A</option>
-                  <option value="2">Unidade Básica B</option>
+                  <option value="UBS Centro">UBS Centro</option>
+                  <option value="Centro de Saúde A">Centro de Saúde A</option>
+                  <option value="Unidade Básica B">Unidade Básica B</option>
                 </select>
               </div>
               <Button type="submit" variant="primary" full> Acessar como Servidor</Button>
