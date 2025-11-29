@@ -1,0 +1,4 @@
+.btn{border:0;padding:12px 18px;border-radius:8px;font-weight:600;cursor:pointer}
+.btn.full{width:100%}
+.btn.primary{background:linear-gradient(90deg,#1e64f7,#06a94a);color:#fff}
+.btn.ghost{background:transparent;border:1px solid #e6e9ee;color:#3a4956}
