@@ -1,6 +1,0 @@
-.app-navbar{background:#fff;border-bottom:4px solid #0aa64a}
-.app-navbar-inner{max-width:1100px;margin:0 auto;padding:18px 24px;display:flex;align-items:center}
-.brand{display:flex;gap:12px;align-items:center}
-.brand-icon{width:44px;height:44px;border-radius:8px;background:linear-gradient(135deg,#2b7ff2,#09a64a);display:flex;align-items:center;justify-content:center;color:#fff;font-size:20px}
-.brand-title{font-weight:700;color:#1b2b3a}
-.brand-sub{font-size:12px;color:#6b7782}

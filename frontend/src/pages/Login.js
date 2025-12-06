@@ -1,11 +1,101 @@
 import React, {useState} from 'react';
+import styled from 'styled-components';
 import NavBar from '../components/NavBar';
-import Footer from '../components/Footer';
 import Button from '../components/Button';
-import Input from '../components/Input';
-import './Login.css';
 import Exame from './Exame';
 import ServerContext from './ServerContext';
+
+const LoginHero = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 70vh;
+  background: linear-gradient(120deg,#e8f7f6,#f0fbef 80%);
+`;
+const LoginCard = styled.div`
+  background: #fff;
+  padding: 32px 28px;
+  border-radius: 12px;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.08);
+  min-width: 340px;
+  max-width: 400px;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+`;
+const Avatar = styled.div`
+  width: 56px;
+  height: 56px;
+  background: linear-gradient(135deg,#16a34a,#2b6df6);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 32px;
+  color: #fff;
+  margin-bottom: 12px;
+`;
+const Title = styled.h2`
+  font-size: 2rem;
+  font-weight: bold;
+  margin: 0 0 8px 0;
+  text-align: center;
+`;
+const Subtitle = styled.p`
+  color: #6b7280;
+  font-size: 1rem;
+  margin-bottom: 18px;
+  text-align: center;
+`;
+const Tabs = styled.div`
+  display: flex;
+  gap: 0;
+  margin: 18px 0 12px 0;
+  width: 100%;
+`;
+const Tab = styled.button`
+  flex: 1;
+  background: ${props => props.active ? '#fff' : '#f3f4f6'};
+  color: ${props => props.active ? '#2b6df6' : '#222'};
+  border: 1px solid #e5e7eb;
+  border-bottom: ${props => props.active ? '2px solid #2b6df6' : '1px solid #e5e7eb'};
+  border-radius: ${props => props.active ? '8px 8px 0 0' : '8px 8px 0 0'};
+  padding: 12px 0;
+  cursor: pointer;
+  font-weight: 500;
+  font-size: 1rem;
+  outline: none;
+  transition: background 0.2s;
+`;
+const FormGroup = styled.div`
+  margin-bottom: 16px;
+  width: 100%;
+`;
+const FormLabel = styled.label`
+  display: block;
+  margin-bottom: 4px;
+  font-weight: 500;
+`;
+const FormInput = styled.input`
+  padding: 12px;
+  border: 1px solid #e5e7eb;
+  border-radius: 6px;
+  width: 100%;
+  font-size: 1rem;
+`;
+const FormSelect = styled.select`
+  padding: 12px;
+  border: 1px solid #e5e7eb;
+  border-radius: 6px;
+  width: 100%;
+  font-size: 1rem;
+`;
+const SmallMuted = styled.div`
+  color: #6b7280;
+  font-size: 13px;
+  margin-bottom: 8px;
+`;
 
 export default function Login(){
   const [mode, setMode] = useState('cidadao');
@@ -22,7 +112,6 @@ export default function Login(){
   }
   function submitServidor(e){
     e.preventDefault();
-    // mock: aceita qualquer id/nome/unidade preenchidos
     if(serverId && name && unit){
       setServerData({ id: serverId, nome: name, unidade: unit });
       setServerLogged(true);
@@ -42,45 +131,49 @@ export default function Login(){
   return (
     <div>
       <NavBar />
-      <div className="login-hero">
-        <div className="login-card">
-          <div className="avatar">👤</div>
-          <h2>Bem-vindo ao ExameSUS</h2>
-          <p className="muted">Acesse suas informações de exames do SUS</p>
-
-          <div className="tabs">
-            <button className={mode==='cidadao'? 'tab active': 'tab'} onClick={()=>setMode('cidadao')}>Cidadao</button>
-            <button className={mode==='servidor'? 'tab active': 'tab'} onClick={()=>setMode('servidor')}>Servidor</button>
-          </div>
-
+      <LoginHero>
+        <LoginCard>
+          <Avatar><span role="img" aria-label="avatar">👤</span></Avatar>
+          <Title>Bem-vindo ao ExameSUS</Title>
+          <Subtitle>Acesse suas informações de exames do SUS</Subtitle>
+          <Tabs>
+            <Tab active={mode==='cidadao'} onClick={()=>setMode('cidadao')}>Cidadão</Tab>
+            <Tab active={mode==='servidor'} onClick={()=>setMode('servidor')}>Servidor</Tab>
+          </Tabs>
           {mode==='cidadao' && (
-            <form onSubmit={submitCidadao}>
-              <Input label="CPF ou Cartão SUS" placeholder="Digite seu CPF ou Cartão SUS" value={cpf} onChange={e=>setCpf(e.target.value)} />
-              <div className="small-muted">Você pode usar qualquer um dos dois documentos para acessar</div>
+            <form onSubmit={submitCidadao} style={{width:'100%'}}>
+              <FormGroup>
+                <FormLabel>CPF ou Cartão SUS</FormLabel>
+                <FormInput placeholder="Digite seu CPF ou Cartão SUS" value={cpf} onChange={e=>setCpf(e.target.value)} />
+              </FormGroup>
+              <SmallMuted>Você pode usar qualquer um dos dois documentos para acessar</SmallMuted>
               <Button type="submit" variant="primary" full> Acessar Sistema</Button>
             </form>
           )}
-
           {mode==='servidor' && (
-            <form onSubmit={submitServidor}>
-              <Input label="ID do Servidor" placeholder="Digite seu ID de servidor" value={serverId} onChange={e=>setServerId(e.target.value)} />
-              <Input label="Nome Completo" placeholder="Digite seu nome completo" value={name} onChange={e=>setName(e.target.value)} />
-              <div className="form-group">
-                <label className="form-label">Unidade de Saúde</label>
-                <select className="form-input" value={unit} onChange={e=>setUnit(e.target.value)}>
+            <form onSubmit={submitServidor} style={{width:'100%'}}>
+              <FormGroup>
+                <FormLabel>ID do Servidor</FormLabel>
+                <FormInput placeholder="Digite seu ID de servidor" value={serverId} onChange={e=>setServerId(e.target.value)} />
+              </FormGroup>
+              <FormGroup>
+                <FormLabel>Nome Completo</FormLabel>
+                <FormInput placeholder="Digite seu nome completo" value={name} onChange={e=>setName(e.target.value)} />
+              </FormGroup>
+              <FormGroup>
+                <FormLabel>Unidade de Saúde</FormLabel>
+                <FormSelect value={unit} onChange={e=>setUnit(e.target.value)}>
                   <option value="">Selecione sua unidade</option>
                   <option value="UBS Centro">UBS Centro</option>
                   <option value="Centro de Saúde A">Centro de Saúde A</option>
                   <option value="Unidade Básica B">Unidade Básica B</option>
-                </select>
-              </div>
+                </FormSelect>
+              </FormGroup>
               <Button type="submit" variant="primary" full> Acessar como Servidor</Button>
             </form>
           )}
-
-        </div>
-      </div>
-      <Footer />
+        </LoginCard>
+      </LoginHero>
     </div>
   )
 }
