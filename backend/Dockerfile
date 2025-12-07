@@ -5,7 +5,7 @@ WORKDIR /app
 # Copia APENAS o backend
 COPY backend/. .
 
-RUN mvn -e -B -DskipTests package
+RUN mvn -X -e -B -DskipTests package
 
 # Etapa final
 FROM eclipse-temurin:17-jdk
