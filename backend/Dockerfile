@@ -1,13 +1,12 @@
-# Etapa de build usando Maven
+# Etapa de build
 FROM maven:3.9.6-eclipse-temurin-17 AS build
 WORKDIR /app
 
-# Copia SOMENTE o backend, não o repo inteiro
-COPY backend/. .
+# Copia TODO o conteúdo da pasta backend para dentro do container
+COPY . .
 
 RUN mvn -e -B -DskipTests package
 
-# ---------------------------
 # Etapa final
 FROM eclipse-temurin:17-jdk
 WORKDIR /app
