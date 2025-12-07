@@ -2,10 +2,10 @@
 FROM maven:3.9.6-eclipse-temurin-17 AS build
 WORKDIR /app
 
-# Copia APENAS o backend
-COPY backend/. .
+COPY backend/pom.xml .
+COPY backend/src ./src
 
-RUN mvn -X -e -B -DskipTests package
+RUN mvn -e -B -DskipTests package
 
 # Etapa final
 FROM eclipse-temurin:17-jdk
