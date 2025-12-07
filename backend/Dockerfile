@@ -2,8 +2,8 @@
 FROM maven:3.9.6-eclipse-temurin-17 AS build
 WORKDIR /app
 
-# Copia TODO o conteúdo da pasta backend para dentro do container
-COPY . .
+# Copia APENAS o backend
+COPY backend/. .
 
 RUN mvn -e -B -DskipTests package
 
