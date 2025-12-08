@@ -1,7 +1,5 @@
 package com.example.backend.service;
 
-
-
 import com.example.backend.dto.CidadaoDTO;
 import com.example.backend.model.Cidadao;
 import com.example.backend.repository.CidadaoRepository;
@@ -20,14 +18,10 @@ public class CidadaoService {
         Cidadao c = new Cidadao();
         c.setNome(dto.getNome());
         c.setDocumento(dto.getDocumento());
-        c.setLogin(dto.getLogin());
-        c.setSenha(dto.getSenha());
         return repository.save(c);
     }
 
-    public boolean autenticar(String login, String senha) {
-        return repository.findByLogin(login)
-                .filter(user -> user.getSenha().equals(senha))
-                .isPresent();
+    public boolean autenticar(String documento) {
+        return repository.findByDocumento(documento).isPresent();
     }
 }

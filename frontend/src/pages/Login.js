@@ -121,10 +121,7 @@ export default function Login() {
       return;
     }
 
-    // senha provisória até vc implementar campo de senha
-    const senha = "123";
-
-    const result = await loginCidadao(cpf, senha);
+    const result = await loginCidadao(cpf);
 
     if (result.success && result.message.includes("Acesso permitido")) {
       alert("Login de cidadão realizado com sucesso!");
@@ -147,7 +144,6 @@ export default function Login() {
     const result = await loginServidor(serverId, name);
 
     if (result.success && result.message.includes("Acesso permitido")) {
-      // dados validados no backend
       setServerData({ id: serverId, nome: name, unidade: unit });
       setServerLogged(true);
     } else {

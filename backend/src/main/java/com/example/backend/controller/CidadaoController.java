@@ -2,6 +2,7 @@ package com.example.backend.controller;
 
 import com.example.backend.dto.CidadaoDTO;
 import com.example.backend.service.CidadaoService;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -15,18 +16,20 @@ public class CidadaoController {
     }
 
     @PostMapping("/cadastrar")
-    public String cadastrar(@RequestBody CidadaoDTO dto) {
+    public ResponseEntity<?> cadastrar(@RequestBody CidadaoDTO dto) {
         service.cadastrarCidadao(dto);
-        return "Cidadão cadastrado com sucesso!";
+        return ResponseEntity.ok("Cidadão cadastrado com sucesso!");
     }
 
     @PostMapping("/login")
-    public String login(@RequestParam String login,
-                        @RequestParam String senha) {
+    public ResponseEntity<?> login(@RequestParam String documento) {
 
-        if (service.autenticar(login, senha)) {
-            return "Acesso permitido.";
+        boolean autenticado = service.autenticar(documento);
+
+        if (autenticado) {
+            return ResponseEntity.ok("Acesso permitido");
         }
-        return "Login ou senha inválidos.";
+
+        return ResponseEntity.status(401).body("Documento não encontrado.");
     }
 }

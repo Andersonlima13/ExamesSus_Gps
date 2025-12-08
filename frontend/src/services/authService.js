@@ -3,10 +3,10 @@ import api from "./api";
 // -----------------------
 // LOGIN CIDADÃO
 // -----------------------
-export async function loginCidadao(login, senha) {
+export async function loginCidadao(documento) {
   try {
     const response = await api.post(`/cidadao/login`, null, {
-      params: { login, senha }
+      params: { documento }
     });
 
     return { success: true, message: response.data };
@@ -14,7 +14,6 @@ export async function loginCidadao(login, senha) {
     return { success: false, message: "Erro ao tentar autenticar cidadão." };
   }
 }
-
 // -----------------------
 // LOGIN SERVIDOR
 // -----------------------

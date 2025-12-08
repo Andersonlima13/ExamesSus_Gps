@@ -1,6 +1,5 @@
 package com.example.backend.dto;
 
-
 import com.example.backend.enums.UnidadeSaude;
 import lombok.Data;
 
@@ -8,6 +7,6 @@ import lombok.Data;
 public class ServidorDTO {
     private String nome;
     private UnidadeSaude unidade;
-    private String login;
-    private String senha;
+    private String login; // ID do servidor
+    private String senha; // nome temporariamente
 }
