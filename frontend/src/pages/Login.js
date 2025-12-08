@@ -1,10 +1,13 @@
-import React, {useState} from 'react';
+import React, { useState } from 'react';
 import styled from 'styled-components';
 import NavBar from '../components/NavBar';
 import Button from '../components/Button';
 import Exame from './Exame';
 import ServerContext from './ServerContext';
 
+import { loginCidadao, loginServidor } from "../services/authService";
+
+// -------------------- ESTILOS (igual ao seu) --------------------
 const LoginHero = styled.div`
   display: flex;
   justify-content: center;
@@ -50,9 +53,8 @@ const Subtitle = styled.p`
 `;
 const Tabs = styled.div`
   display: flex;
-  gap: 0;
-  margin: 18px 0 12px 0;
   width: 100%;
+  margin: 18px 0 12px 0;
 `;
 const Tab = styled.button`
   flex: 1;
@@ -60,12 +62,10 @@ const Tab = styled.button`
   color: ${props => props.active ? '#2b6df6' : '#222'};
   border: 1px solid #e5e7eb;
   border-bottom: ${props => props.active ? '2px solid #2b6df6' : '1px solid #e5e7eb'};
-  border-radius: ${props => props.active ? '8px 8px 0 0' : '8px 8px 0 0'};
+  border-radius: 8px 8px 0 0;
   padding: 12px 0;
   cursor: pointer;
   font-weight: 500;
-  font-size: 1rem;
-  outline: none;
   transition: background 0.2s;
 `;
 const FormGroup = styled.div`
@@ -97,30 +97,66 @@ const SmallMuted = styled.div`
   margin-bottom: 8px;
 `;
 
-export default function Login(){
+// -------------------- COMPONENTE PRINCIPAL --------------------
+export default function Login() {
   const [mode, setMode] = useState('cidadao');
+
+  // Cidadão
   const [cpf, setCpf] = useState('');
+
+  // Servidor
   const [serverId, setServerId] = useState('');
   const [name, setName] = useState('');
   const [unit, setUnit] = useState('');
+
   const [serverLogged, setServerLogged] = useState(false);
   const [serverData, setServerData] = useState(null);
 
-  function submitCidadao(e){
+  // ---------------------- LOGIN CIDADÃO ----------------------
+  async function submitCidadao(e) {
     e.preventDefault();
-    alert('Entrando como Cidadão: '+cpf);
-  }
-  function submitServidor(e){
-    e.preventDefault();
-    if(serverId && name && unit){
-      setServerData({ id: serverId, nome: name, unidade: unit });
-      setServerLogged(true);
+
+    if (!cpf.trim()) {
+      alert("Informe seu CPF ou Cartão SUS.");
+      return;
+    }
+
+    // senha provisória até vc implementar campo de senha
+    const senha = "123";
+
+    const result = await loginCidadao(cpf, senha);
+
+    if (result.success && result.message.includes("Acesso permitido")) {
+      alert("Login de cidadão realizado com sucesso!");
+      // redirecionamento quando você desejar
     } else {
-      alert('Preencha todos os campos do servidor.');
+      alert("CPF inválido ou não encontrado.");
     }
   }
 
-  if(serverLogged && serverData){
+  // ---------------------- LOGIN SERVIDOR ----------------------
+  async function submitServidor(e) {
+    e.preventDefault();
+
+    if (!serverId || !name || !unit) {
+      alert("Preencha todos os campos.");
+      return;
+    }
+
+    // aqui usamos ID como login e NOME como senha temporária
+    const result = await loginServidor(serverId, name);
+
+    if (result.success && result.message.includes("Acesso permitido")) {
+      // dados validados no backend
+      setServerData({ id: serverId, nome: name, unidade: unit });
+      setServerLogged(true);
+    } else {
+      alert("ID ou credenciais inválidas.");
+    }
+  }
+
+  // Se o servidor logou → vai para a tela de exame
+  if (serverLogged && serverData) {
     return (
       <ServerContext.Provider value={serverData}>
         <Exame />
@@ -136,44 +172,70 @@ export default function Login(){
           <Avatar><span role="img" aria-label="avatar">👤</span></Avatar>
           <Title>Bem-vindo ao ExameSUS</Title>
           <Subtitle>Acesse suas informações de exames do SUS</Subtitle>
+
           <Tabs>
-            <Tab active={mode==='cidadao'} onClick={()=>setMode('cidadao')}>Cidadão</Tab>
-            <Tab active={mode==='servidor'} onClick={()=>setMode('servidor')}>Servidor</Tab>
+            <Tab active={mode === 'cidadao'} onClick={() => setMode('cidadao')}>Cidadão</Tab>
+            <Tab active={mode === 'servidor'} onClick={() => setMode('servidor')}>Servidor</Tab>
           </Tabs>
-          {mode==='cidadao' && (
-            <form onSubmit={submitCidadao} style={{width:'100%'}}>
+
+          {/* ---------- FORM CIDADÃO ---------- */}
+          {mode === 'cidadao' && (
+            <form onSubmit={submitCidadao} style={{ width: '100%' }}>
               <FormGroup>
                 <FormLabel>CPF ou Cartão SUS</FormLabel>
-                <FormInput placeholder="Digite seu CPF ou Cartão SUS" value={cpf} onChange={e=>setCpf(e.target.value)} />
+                <FormInput
+                  placeholder="Digite seu CPF ou Cartão SUS"
+                  value={cpf}
+                  onChange={e => setCpf(e.target.value)}
+                />
               </FormGroup>
-              <SmallMuted>Você pode usar qualquer um dos dois documentos para acessar</SmallMuted>
-              <Button type="submit" variant="primary" full> Acessar Sistema</Button>
+
+              <SmallMuted>Você pode usar qualquer documento para acessar.</SmallMuted>
+
+              <Button type="submit" variant="primary" full>
+                Acessar Sistema
+              </Button>
             </form>
           )}
-          {mode==='servidor' && (
-            <form onSubmit={submitServidor} style={{width:'100%'}}>
+
+          {/* ---------- FORM SERVIDOR ---------- */}
+          {mode === 'servidor' && (
+            <form onSubmit={submitServidor} style={{ width: '100%' }}>
               <FormGroup>
                 <FormLabel>ID do Servidor</FormLabel>
-                <FormInput placeholder="Digite seu ID de servidor" value={serverId} onChange={e=>setServerId(e.target.value)} />
+                <FormInput
+                  placeholder="Digite seu ID"
+                  value={serverId}
+                  onChange={e => setServerId(e.target.value)}
+                />
               </FormGroup>
+
               <FormGroup>
                 <FormLabel>Nome Completo</FormLabel>
-                <FormInput placeholder="Digite seu nome completo" value={name} onChange={e=>setName(e.target.value)} />
+                <FormInput
+                  placeholder="Digite seu nome"
+                  value={name}
+                  onChange={e => setName(e.target.value)}
+                />
               </FormGroup>
+
               <FormGroup>
                 <FormLabel>Unidade de Saúde</FormLabel>
-                <FormSelect value={unit} onChange={e=>setUnit(e.target.value)}>
+                <FormSelect value={unit} onChange={e => setUnit(e.target.value)}>
                   <option value="">Selecione sua unidade</option>
                   <option value="UBS Centro">UBS Centro</option>
                   <option value="Centro de Saúde A">Centro de Saúde A</option>
                   <option value="Unidade Básica B">Unidade Básica B</option>
                 </FormSelect>
               </FormGroup>
-              <Button type="submit" variant="primary" full> Acessar como Servidor</Button>
+
+              <Button type="submit" variant="primary" full>
+                Acessar como Servidor
+              </Button>
             </form>
           )}
         </LoginCard>
       </LoginHero>
     </div>
-  )
+  );
 }
