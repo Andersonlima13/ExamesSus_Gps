@@ -1,7 +1,6 @@
 import React from 'react';
 import styled, { createGlobalStyle } from 'styled-components';
 import NavBar from '../components/NavBar';
-import Footer from '../components/Footer';
 
 const UbuntuFont = createGlobalStyle`
   @import url('https://fonts.googleapis.com/css2?family=Ubuntu:wght@400;500;700&display=swap');

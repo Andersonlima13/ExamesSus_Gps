@@ -16,7 +16,7 @@ public class WebConfig {
 
                 registry.addMapping("/**") // Permite todas as rotas da API
                         .allowedOrigins(
-                                "https://exames-sus-agli09vpx-anderson-limas-projects-9d214b10.vercel.app"
+                                "https://exames-sus-gps.vercel.app/"
                         )
                         .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
                         .allowedHeaders("*")

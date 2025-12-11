@@ -1,7 +1,6 @@
 import React, { useState, useContext } from 'react';
 import styled, { createGlobalStyle } from 'styled-components';
 import NavBar from '../components/NavBar';
-// import Footer from '../components/Footer'; // Removido para evitar duplicidade
 import ServerContext from './ServerContext';
 
 const UbuntuFont = createGlobalStyle`
