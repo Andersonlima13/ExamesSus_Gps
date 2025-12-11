@@ -4,8 +4,8 @@ import api from "../lib/api"
 // -----------------------
 export async function loginCidadao(documento) {
   try {
-    const response = await api.post(`/cidadao/login`, null, {
-      params: { documento }
+    const response = await api.post(`/cidadao/login`, {
+       documento: documento
     });
 
     return { success: true, message: response.data };
@@ -13,9 +13,8 @@ export async function loginCidadao(documento) {
     return { success: false, message: "Erro ao tentar autenticar cidadão." };
   }
 }
-// -----------------------
-// LOGIN SERVIDOR
-// -----------------------
+
+
 export async function loginServidor(login, senha) {
   try {
     const response = await api.post(`/servidor/login`, null, {

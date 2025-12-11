@@ -22,9 +22,9 @@ public class CidadaoController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestParam String documento) {
+    public ResponseEntity<?> login(@RequestBody CidadaoDTO dto) {
 
-        boolean autenticado = service.autenticar(documento);
+        boolean autenticado = service.autenticar(dto.getDocumento());
 
         if (autenticado) {
             return ResponseEntity.ok("Acesso permitido");
