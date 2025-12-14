@@ -3,6 +3,8 @@ package com.example.backend.model;
 import jakarta.persistence.*;
 import lombok.Data;
 
+import java.util.List;
+
 @Entity
 @Data
 public class Cidadao {
@@ -14,8 +16,8 @@ public class Cidadao {
     private String nome;
 
     @Column(unique = true, nullable = false)
-    private String documento; // CPF ou RG
+    private String documento;
 
-    private String login;
-    private String senha;
+    @OneToMany(mappedBy = "cidadao", cascade = CascadeType.ALL)
+    private List<Exame> exames;
 }
