@@ -1,8 +1,10 @@
-import React, { useState, useContext } from 'react';
+import React, { useState } from 'react';
 import styled, { createGlobalStyle } from 'styled-components';
 import NavBar from '../components/NavBar';
 import { useLocation } from 'react-router-dom';
+import { cadastrarCidadao } from '../services/servidorService';
 
+/* ---------------- FONT ---------------- */
 const UbuntuFont = createGlobalStyle`
   @import url('https://fonts.googleapis.com/css2?family=Ubuntu:wght@400;500;700&display=swap');
   body, * {
@@ -10,18 +12,17 @@ const UbuntuFont = createGlobalStyle`
   }
 `;
 
+/* ---------------- STYLES (reaproveitados) ---------------- */
 const PageRoot = styled.div`
   min-height: 100vh;
   display: flex;
   flex-direction: column;
-  font-family: 'Ubuntu', Arial, sans-serif;
 `;
 const PageContent = styled.main`
   flex: 1;
   padding: 24px;
   max-width: 1100px;
   margin: 0 auto;
-  font-family: 'Ubuntu', Arial, sans-serif;
 `;
 const Hero = styled.section`
   background: linear-gradient(90deg,#e8f7f6,#f0fbef);
@@ -29,18 +30,14 @@ const Hero = styled.section`
   border-radius: 6px;
   box-shadow: 0 2px 0 rgba(0,0,0,0.05);
   margin-bottom: 18px;
-  font-family: 'Ubuntu', Arial, sans-serif;
 `;
 const HeroCard = styled.div`
-  background: transparent;
   padding: 12px;
-  font-family: 'Ubuntu', Arial, sans-serif;
 `;
 const HeroMeta = styled.div`
   text-align: right;
   color: #6b7280;
   margin-top: 8px;
-  font-family: 'Ubuntu', Arial, sans-serif;
 `;
 const Actions = styled.section`
   display: flex;
@@ -49,7 +46,6 @@ const Actions = styled.section`
   @media (max-width: 720px) {
     flex-direction: column;
   }
-  font-family: 'Ubuntu', Arial, sans-serif;
 `;
 const Btn = styled.button`
   padding: 14px 22px;
@@ -57,37 +53,21 @@ const Btn = styled.button`
   border: none;
   cursor: pointer;
   box-shadow: 0 4px 10px rgba(0,0,0,0.05);
-  background: ${props => props.primary ? '#2b6df6' : props.success ? '#16a34a' : '#fff'};
-  color: ${props => (props.primary || props.success) ? '#fff' : '#222'};
-  font-family: 'Ubuntu', Arial, sans-serif;
+  background: ${p => p.primary ? '#2b6df6' : p.success ? '#16a34a' : '#fff'};
+  color: ${p => (p.primary || p.success) ? '#fff' : '#222'};
+  display: flex;
+  align-items: center;
+  gap: 8px;
 `;
 const ListCard = styled.div`
   padding: 24px;
   border-radius: 8px;
   box-shadow: 0 8px 16px rgba(0,0,0,0.05);
-  font-family: 'Ubuntu', Arial, sans-serif;
 `;
 const Empty = styled.div`
   padding: 42px;
   text-align: center;
   color: #6b7280;
-  font-family: 'Ubuntu', Arial, sans-serif;
-`;
-const EmptyIco = styled.div`
-  font-size: 36px;
-  margin-bottom: 10px;
-  font-family: 'Ubuntu', Arial, sans-serif;
-`;
-const ExameItem = styled.li`
-  padding: 12px;
-  border-bottom: 1px solid #edf2f7;
-  &:last-child { border-bottom: 0; }
-  font-family: 'Ubuntu', Arial, sans-serif;
-`;
-const Muted = styled.div`
-  color: #6b7280;
-  font-size: 13px;
-  font-family: 'Ubuntu', Arial, sans-serif;
 `;
 const Modal = styled.div`
   position: fixed;
@@ -96,7 +76,6 @@ const Modal = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-  font-family: 'Ubuntu', Arial, sans-serif;
 `;
 const ModalCard = styled.div`
   background: #fff;
@@ -104,40 +83,67 @@ const ModalCard = styled.div`
   border-radius: 8px;
   width: 420px;
   box-shadow: 0 18px 40px rgba(2,6,23,0.2);
-  font-family: 'Ubuntu', Arial, sans-serif;
 `;
 const ModalActions = styled.div`
   display: flex;
   justify-content: flex-end;
   gap: 8px;
-  margin-top: 8px;
-  font-family: 'Ubuntu', Arial, sans-serif;
+  margin-top: 12px;
 `;
 const Input = styled.input`
   padding: 10px;
   border: 1px solid #e5e7eb;
   border-radius: 6px;
-  margin-bottom: 8px;
-  font-family: 'Ubuntu', Arial, sans-serif;
+  margin-bottom: 10px;
+  width: 100%;
 `;
 const Label = styled.label`
-  margin-top: 8px;
-  font-family: 'Ubuntu', Arial, sans-serif;
+  font-size: 14px;
 `;
 
+/* ---------------- COMPONENT ---------------- */
 export default function Exame() {
   const location = useLocation();
   const servidor = location.state?.servidor;
 
+  const [showModal, setShowModal] = useState(false);
+  const [nome, setNome] = useState('');
+  const [documento, setDocumento] = useState('');
+  const [loading, setLoading] = useState(false);
+
   if (!servidor) {
     return <p>Acesso não autorizado.</p>;
+  }
+
+  async function handleCadastrarCidadao() {
+    if (!nome || !documento) {
+      alert("Preencha todos os campos.");
+      return;
+    }
+
+    setLoading(true);
+
+    const result = await cadastrarCidadao(nome, documento);
+
+    setLoading(false);
+
+    if (result.success) {
+      alert(result.message);
+      setShowModal(false);
+      setNome('');
+      setDocumento('');
+    } else {
+      alert(result.message);
+    }
   }
 
   return (
     <PageRoot>
       <UbuntuFont />
       <NavBar />
+
       <PageContent>
+        {/* HERO */}
         <Hero>
           <HeroCard>
             <h2>Painel do Servidor</h2>
@@ -145,14 +151,61 @@ export default function Exame() {
 
             <HeroMeta>
               <strong>Servidor:</strong> {servidor.nome}<br />
-              <strong>Unidade:</strong> {servidor.unidade}<br />
-              <strong>Matrícula:</strong> {servidor.matricula}
+              <strong>Unidade:</strong> {servidor.unidade}
             </HeroMeta>
           </HeroCard>
         </Hero>
 
-        {/* restante da tela permanece igual */}
+        {/* ACTION BUTTONS */}
+        <Actions>
+          <Btn primary>
+            📅 Agendar Exame
+          </Btn>
+
+          <Btn success onClick={() => setShowModal(true)}>
+            👤 Cadastrar Usuário
+          </Btn>
+        </Actions>
+
+        {/* LISTAGEM (placeholder) */}
+        <ListCard>
+          <h3>Exames da Unidade</h3>
+          <Empty>
+            <div style={{ fontSize: 32 }}>📄</div>
+            Nenhum exame encontrado
+          </Empty>
+        </ListCard>
       </PageContent>
+
+      {/* MODAL CADASTRO */}
+      {showModal && (
+        <Modal>
+          <ModalCard>
+            <h3>Cadastrar Novo Cidadão</h3>
+
+            <Label>Nome completo</Label>
+            <Input
+              value={nome}
+              onChange={e => setNome(e.target.value)}
+            />
+
+            <Label>CPF ou Documento</Label>
+            <Input
+              value={documento}
+              onChange={e => setDocumento(e.target.value)}
+            />
+
+            <ModalActions>
+              <Btn onClick={() => setShowModal(false)}>
+                Cancelar
+              </Btn>
+              <Btn success onClick={handleCadastrarCidadao} disabled={loading}>
+                {loading ? 'Salvando...' : 'Cadastrar'}
+              </Btn>
+            </ModalActions>
+          </ModalCard>
+        </Modal>
+      )}
     </PageRoot>
   );
 }
