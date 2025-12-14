@@ -6,6 +6,7 @@ import Exame from './Exame';
 import ServerContext from './ServerContext';
 
 import { loginCidadao, loginServidor } from "../services/authService";
+import { redirect } from 'react-router-dom';
 
 // -------------------- ESTILOS (igual ao seu) --------------------
 const LoginHero = styled.div`
@@ -84,13 +85,7 @@ const FormInput = styled.input`
   width: 100%;
   font-size: 1rem;
 `;
-const FormSelect = styled.select`
-  padding: 12px;
-  border: 1px solid #e5e7eb;
-  border-radius: 6px;
-  width: 100%;
-  font-size: 1rem;
-`;
+
 const SmallMuted = styled.div`
   color: #6b7280;
   font-size: 13px;
@@ -106,8 +101,7 @@ export default function Login() {
 
   // Servidor
   const [serverId, setServerId] = useState('');
-  const [name, setName] = useState('');
-  const [unit, setUnit] = useState('');
+
 
   const [serverLogged, setServerLogged] = useState(false);
   const [serverData, setServerData] = useState(null);
@@ -125,6 +119,7 @@ export default function Login() {
 
     if (result.success && result.message.includes("Acesso permitido")) {
       alert("Login de cidadão realizado com sucesso!");
+      redirect('/exame');
       // redirecionamento quando você desejar
     } else {
       alert("CPF inválido ou não encontrado.");
@@ -135,16 +130,13 @@ export default function Login() {
   async function submitServidor(e) {
     e.preventDefault();
 
-    if (!serverId || !name || !unit) {
-      alert("Preencha todos os campos.");
-      return;
-    }
+
 
     // aqui usamos ID como login e NOME como senha temporária
-    const result = await loginServidor(serverId, name);
+    const result = await loginServidor(serverId);
 
     if (result.success && result.message.includes("Acesso permitido")) {
-      setServerData({ id: serverId, nome: name, unidade: unit });
+      setServerData({ id: serverId});
       setServerLogged(true);
     } else {
       alert("ID ou credenciais inválidas.");
@@ -198,32 +190,16 @@ export default function Login() {
           {mode === 'servidor' && (
             <form onSubmit={submitServidor} style={{ width: '100%' }}>
               <FormGroup>
-                <FormLabel>ID do Servidor</FormLabel>
+                <FormLabel>Matricula do Servidor</FormLabel>
                 <FormInput
-                  placeholder="Digite seu ID"
+                  placeholder="Digite sua matrícula"
                   value={serverId}
                   onChange={e => setServerId(e.target.value)}
                 />
               </FormGroup>
 
-              <FormGroup>
-                <FormLabel>Nome Completo</FormLabel>
-                <FormInput
-                  placeholder="Digite seu nome"
-                  value={name}
-                  onChange={e => setName(e.target.value)}
-                />
-              </FormGroup>
+          
 
-              <FormGroup>
-                <FormLabel>Unidade de Saúde</FormLabel>
-                <FormSelect value={unit} onChange={e => setUnit(e.target.value)}>
-                  <option value="">Selecione sua unidade</option>
-                  <option value="UBS Centro">UBS Centro</option>
-                  <option value="Centro de Saúde A">Centro de Saúde A</option>
-                  <option value="Unidade Básica B">Unidade Básica B</option>
-                </FormSelect>
-              </FormGroup>
 
               <Button type="submit" variant="primary" full>
                 Acessar como Servidor

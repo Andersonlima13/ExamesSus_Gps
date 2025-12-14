@@ -7,6 +7,8 @@ import lombok.Data;
 public class ServidorDTO {
     private String nome;
     private UnidadeSaude unidade;
-    private String login; // ID do servidor
-    private String senha; // nome temporariamente
+    private String matricula;
+
+    public void setMatricula(String matricula){matricula = this.matricula;}
+
 }
