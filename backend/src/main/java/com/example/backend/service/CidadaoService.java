@@ -5,7 +5,9 @@ import com.example.backend.model.Cidadao;
 import com.example.backend.repository.CidadaoRepository;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class CidadaoService {
@@ -23,7 +25,7 @@ public class CidadaoService {
         return repository.save(c);
     }
 
-    // NOVO MÉTODO PARA LOGIN
+    // LOGIN
     public Optional<CidadaoDTO> buscarPorDocumento(String documento) {
         return repository.findByDocumento(documento)
                 .map(cidadao -> {
@@ -34,4 +36,16 @@ public class CidadaoService {
                 });
     }
 
+    // ✅ LISTAR TODOS (para dropdown)
+    public List<CidadaoDTO> listarCidadaos() {
+        return repository.findAll()
+                .stream()
+                .map(cidadao -> {
+                    CidadaoDTO dto = new CidadaoDTO();
+                    dto.setNome(cidadao.getNome());
+                    dto.setDocumento(cidadao.getDocumento());
+                    return dto;
+                })
+                .collect(Collectors.toList());
+    }
 }

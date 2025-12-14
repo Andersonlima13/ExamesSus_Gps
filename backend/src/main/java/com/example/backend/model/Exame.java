@@ -1,5 +1,6 @@
 package com.example.backend.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -16,6 +17,8 @@ public class Exame {
     // muitos exames → um cidadão
     @ManyToOne(optional = false)
     @JoinColumn(name = "cidadao_id")
+    @JsonIgnore
+
     private Cidadao cidadao;
 
     @Column(nullable = false)

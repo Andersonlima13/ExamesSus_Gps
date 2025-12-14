@@ -1,8 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import styled, { createGlobalStyle } from 'styled-components';
 import NavBar from '../components/NavBar';
 import { useLocation } from 'react-router-dom';
+
 import { cadastrarCidadao } from '../services/servidorService';
+import { cadastrarExame } from '../services/exameService';
+import { listarCidadaos } from '../services/cidadaoService';
 
 /* ---------------- FONT ---------------- */
 const UbuntuFont = createGlobalStyle`
@@ -12,7 +15,7 @@ const UbuntuFont = createGlobalStyle`
   }
 `;
 
-/* ---------------- STYLES (reaproveitados) ---------------- */
+/* ---------------- STYLES ---------------- */
 const PageRoot = styled.div`
   min-height: 100vh;
   display: flex;
@@ -28,36 +31,25 @@ const Hero = styled.section`
   background: linear-gradient(90deg,#e8f7f6,#f0fbef);
   padding: 18px;
   border-radius: 6px;
-  box-shadow: 0 2px 0 rgba(0,0,0,0.05);
   margin-bottom: 18px;
 `;
-const HeroCard = styled.div`
-  padding: 12px;
-`;
+const HeroCard = styled.div``;
 const HeroMeta = styled.div`
   text-align: right;
   color: #6b7280;
-  margin-top: 8px;
 `;
 const Actions = styled.section`
   display: flex;
   gap: 18px;
   margin: 18px 0;
-  @media (max-width: 720px) {
-    flex-direction: column;
-  }
 `;
 const Btn = styled.button`
   padding: 14px 22px;
   border-radius: 8px;
   border: none;
   cursor: pointer;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.05);
   background: ${p => p.primary ? '#2b6df6' : p.success ? '#16a34a' : '#fff'};
   color: ${p => (p.primary || p.success) ? '#fff' : '#222'};
-  display: flex;
-  align-items: center;
-  gap: 8px;
 `;
 const ListCard = styled.div`
   padding: 24px;
@@ -82,7 +74,6 @@ const ModalCard = styled.div`
   padding: 18px;
   border-radius: 8px;
   width: 420px;
-  box-shadow: 0 18px 40px rgba(2,6,23,0.2);
 `;
 const ModalActions = styled.div`
   display: flex;
@@ -92,10 +83,13 @@ const ModalActions = styled.div`
 `;
 const Input = styled.input`
   padding: 10px;
-  border: 1px solid #e5e7eb;
-  border-radius: 6px;
-  margin-bottom: 10px;
   width: 100%;
+  margin-bottom: 10px;
+`;
+const Select = styled.select`
+  padding: 10px;
+  width: 100%;
+  margin-bottom: 10px;
 `;
 const Label = styled.label`
   font-size: 14px;
@@ -106,35 +100,51 @@ export default function Exame() {
   const location = useLocation();
   const servidor = location.state?.servidor;
 
-  const [showModal, setShowModal] = useState(false);
+  /* ---- cidadão ---- */
+  const [showCidadaoModal, setShowCidadaoModal] = useState(false);
   const [nome, setNome] = useState('');
   const [documento, setDocumento] = useState('');
-  const [loading, setLoading] = useState(false);
 
-  if (!servidor) {
-    return <p>Acesso não autorizado.</p>;
-  }
+  /* ---- exame ---- */
+  const [showExameModal, setShowExameModal] = useState(false);
+  const [cidadaos, setCidadaos] = useState([]);
+  const [documentoCidadao, setDocumentoCidadao] = useState('');
+  const [tipoExame, setTipoExame] = useState('');
+  const [data, setData] = useState('');
+  const [horario, setHorario] = useState('');
+
+  /* ---- carregar cidadãos ---- */
+  useEffect(() => {
+    async function carregar() {
+      const lista = await listarCidadaos();
+      setCidadaos(lista);
+    }
+    carregar();
+  }, []);
+
+  if (!servidor) return <p>Acesso não autorizado.</p>;
 
   async function handleCadastrarCidadao() {
-    if (!nome || !documento) {
-      alert("Preencha todos os campos.");
-      return;
-    }
-
-    setLoading(true);
-
     const result = await cadastrarCidadao(nome, documento);
+    alert(result.message);
+    setShowCidadaoModal(false);
+    setNome('');
+    setDocumento('');
+  }
 
-    setLoading(false);
+  async function handleCadastrarExame() {
+    const result = await cadastrarExame({
+      documentoCidadao,
+      tipoExame,
+      data,
+      horario
+    });
 
-    if (result.success) {
-      alert(result.message);
-      setShowModal(false);
-      setNome('');
-      setDocumento('');
-    } else {
-      alert(result.message);
-    }
+    alert(result.message);
+    setShowExameModal(false);
+    setTipoExame('');
+    setData('');
+    setHorario('');
   }
 
   return (
@@ -143,65 +153,82 @@ export default function Exame() {
       <NavBar />
 
       <PageContent>
-        {/* HERO */}
         <Hero>
           <HeroCard>
             <h2>Painel do Servidor</h2>
-            <p>Gerencie exames e cadastre novos usuários no sistema.</p>
-
             <HeroMeta>
-              <strong>Servidor:</strong> {servidor.nome}<br />
-              <strong>Unidade:</strong> {servidor.unidade}
+              <strong>{servidor.nome}</strong> – {servidor.unidade}
             </HeroMeta>
           </HeroCard>
         </Hero>
 
-        {/* ACTION BUTTONS */}
         <Actions>
-          <Btn primary>
+          <Btn primary onClick={() => setShowExameModal(true)}>
             📅 Agendar Exame
           </Btn>
 
-          <Btn success onClick={() => setShowModal(true)}>
+          <Btn success onClick={() => setShowCidadaoModal(true)}>
             👤 Cadastrar Usuário
           </Btn>
         </Actions>
 
-        {/* LISTAGEM (placeholder) */}
         <ListCard>
           <h3>Exames da Unidade</h3>
-          <Empty>
-            <div style={{ fontSize: 32 }}>📄</div>
-            Nenhum exame encontrado
-          </Empty>
+          <Empty>Nenhum exame encontrado</Empty>
         </ListCard>
       </PageContent>
 
-      {/* MODAL CADASTRO */}
-      {showModal && (
+      {/* -------- MODAL EXAME -------- */}
+      {showExameModal && (
         <Modal>
           <ModalCard>
-            <h3>Cadastrar Novo Cidadão</h3>
+            <h3>Agendar Exame</h3>
 
-            <Label>Nome completo</Label>
-            <Input
-              value={nome}
-              onChange={e => setNome(e.target.value)}
-            />
+            <Label>Paciente</Label>
+            <Select
+              value={documentoCidadao}
+              onChange={e => setDocumentoCidadao(e.target.value)}
+            >
+              <option value="">Selecione o paciente</option>
+              {cidadaos.map(c => (
+                <option key={c.documento} value={c.documento}>
+                  {c.nome} – {c.documento}
+                </option>
+              ))}
+            </Select>
 
-            <Label>CPF ou Documento</Label>
-            <Input
-              value={documento}
-              onChange={e => setDocumento(e.target.value)}
-            />
+            <Label>Tipo de Exame</Label>
+            <Input value={tipoExame} onChange={e => setTipoExame(e.target.value)} />
+
+            <Label>Data</Label>
+            <Input type="date" value={data} onChange={e => setData(e.target.value)} />
+
+            <Label>Horário</Label>
+            <Input type="time" value={horario} onChange={e => setHorario(e.target.value)} />
 
             <ModalActions>
-              <Btn onClick={() => setShowModal(false)}>
-                Cancelar
-              </Btn>
-              <Btn success onClick={handleCadastrarCidadao} disabled={loading}>
-                {loading ? 'Salvando...' : 'Cadastrar'}
-              </Btn>
+              <Btn onClick={() => setShowExameModal(false)}>Cancelar</Btn>
+              <Btn primary onClick={handleCadastrarExame}>Salvar</Btn>
+            </ModalActions>
+          </ModalCard>
+        </Modal>
+      )}
+
+      {/* -------- MODAL CIDADÃO -------- */}
+      {showCidadaoModal && (
+        <Modal>
+          <ModalCard>
+            <h3>Cadastrar Cidadão</h3>
+
+            <Label>Nome</Label>
+            <Input value={nome} onChange={e => setNome(e.target.value)} />
+
+            <Label>Documento</Label>
+            <Input value={documento} onChange={e => setDocumento(e.target.value)} />
+
+            <ModalActions>
+              <Btn onClick={() => setShowCidadaoModal(false)}>Cancelar</Btn>
+              <Btn success onClick={handleCadastrarCidadao}>Cadastrar</Btn>
             </ModalActions>
           </ModalCard>
         </Modal>
