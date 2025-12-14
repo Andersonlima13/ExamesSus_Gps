@@ -4,7 +4,7 @@ import NavBar from '../components/NavBar';
 import Button from '../components/Button';
 import Exame from './Exame';
 import ServerContext from './ServerContext';
-
+import { useNavigate } from "react-router-dom";
 import { loginCidadao, loginServidor } from "../services/authService";
 import { redirect } from 'react-router-dom';
 
@@ -89,6 +89,7 @@ const FormInput = styled.input`
 
 // -------------------- COMPONENTE PRINCIPAL --------------------
 export default function Login() {
+  const navigate = useNavigate();
   const [mode, setMode] = useState("cidadao");
 
   // Cidadão
@@ -96,9 +97,6 @@ export default function Login() {
 
   // Servidor
   const [serverId, setServerId] = useState("");
-
-  const [serverLogged, setServerLogged] = useState(false);
-  const [serverData, setServerData] = useState(null);
 
   // ---------------------- LOGIN CIDADÃO ----------------------
   async function submitCidadao(e) {
@@ -111,11 +109,10 @@ export default function Login() {
 
     const result = await loginCidadao(cpf);
 
-    if (result.success && result.message.includes("Acesso permitido")) {
-      alert("Login de cidadão realizado com sucesso!");
-      redirect("/exame");
+    if (result.success) {
+      navigate("/home/exame");
     } else {
-      alert("CPF inválido ou não encontrado.");
+      alert(result.message || "CPF inválido ou não encontrado.");
     }
   }
 
@@ -131,34 +128,27 @@ export default function Login() {
     const result = await loginServidor(serverId);
 
     if (result.success && result.servidor) {
-      setServerData({
-        id: result.servidor.id,
-        nome: result.servidor.nome,
-        unidade: result.servidor.unidade
-      });
-      setServerLogged(true);
-    } else {
-      alert("Matrícula não encontrada.");
-    }
-  }
+      // salva dados do servidor (contexto, localStorage ou state global)
+      localStorage.setItem(
+        "servidor",
+        JSON.stringify(result.servidor)
+      );
 
-  // Se o servidor logou → vai para a tela de exame
-  if (serverLogged && serverData) {
-    return (
-      <ServerContext.Provider value={serverData}>
-        <Exame />
-      </ServerContext.Provider>
-    );
+      navigate("/home/agendamento");
+    } else {
+      alert(result.message || "Matrícula não encontrada.");
+    }
   }
 
   return (
     <div>
       <NavBar />
+
       <LoginHero>
         <LoginCard>
           <Avatar>👤</Avatar>
           <Title>Bem-vindo ao ExameSUS</Title>
-          <Subtitle>Acesse suas informações de exames do SUS</Subtitle>
+          <Subtitle>Acesse suas informações do SUS</Subtitle>
 
           <Tabs>
             <Tab active={mode === "cidadao"} onClick={() => setMode("cidadao")}>
@@ -169,7 +159,6 @@ export default function Login() {
             </Tab>
           </Tabs>
 
-          {/* ---------- FORM CIDADÃO ---------- */}
           {mode === "cidadao" && (
             <form onSubmit={submitCidadao}>
               <FormGroup>
@@ -186,7 +175,6 @@ export default function Login() {
             </form>
           )}
 
-          {/* ---------- FORM SERVIDOR ---------- */}
           {mode === "servidor" && (
             <form onSubmit={submitServidor}>
               <FormGroup>

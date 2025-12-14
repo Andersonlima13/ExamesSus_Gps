@@ -18,7 +18,7 @@ public class CidadaoController {
     @PostMapping("/cadastrar")
     public ResponseEntity<?> cadastrar(@RequestBody CidadaoDTO dto) {
         service.cadastrarCidadao(dto);
-        return ResponseEntity.ok("Cidadão cadastrado com sucesso!");
+        return ResponseEntity.ok().build();
     }
 
     @PostMapping("/login")
@@ -27,7 +27,7 @@ public class CidadaoController {
         boolean autenticado = service.autenticar(dto.getDocumento());
 
         if (autenticado) {
-            return ResponseEntity.ok("Acesso permitido");
+            return ResponseEntity.ok().build(); // ← sucesso sem payload
         }
 
         return ResponseEntity.status(401).body("Documento não encontrado.");
