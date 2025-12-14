@@ -11,12 +11,12 @@ export async function loginCidadao(documento) {
 
     return {
       success: true,
-      message: response.data
+      cidadao: response.data
     };
   } catch (err) {
     return {
       success: false,
-      message: "Erro ao tentar autenticar cidadão."
+      message: "Documento não encontrado."
     };
   }
 }

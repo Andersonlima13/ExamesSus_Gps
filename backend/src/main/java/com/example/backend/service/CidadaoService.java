@@ -5,6 +5,8 @@ import com.example.backend.model.Cidadao;
 import com.example.backend.repository.CidadaoRepository;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 @Service
 public class CidadaoService {
 
@@ -21,7 +23,14 @@ public class CidadaoService {
         return repository.save(c);
     }
 
-    public boolean autenticar(String documento) {
-        return repository.findByDocumento(documento).isPresent();
+    // 🔹 NOVO MÉTODO PARA LOGIN
+    public Optional<CidadaoDTO> buscarPorDocumento(String documento) {
+        return repository.findByDocumento(documento)
+                .map(cidadao -> {
+                    CidadaoDTO dto = new CidadaoDTO();
+                    dto.setNome(cidadao.getNome());
+                    dto.setDocumento(cidadao.getDocumento());
+                    return dto;
+                });
     }
 }

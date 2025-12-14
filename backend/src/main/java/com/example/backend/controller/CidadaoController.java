@@ -24,12 +24,14 @@ public class CidadaoController {
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody CidadaoDTO dto) {
 
-        boolean autenticado = service.autenticar(dto.getDocumento());
+        var cidadaoOpt = service.buscarPorDocumento(dto.getDocumento());
 
-        if (autenticado) {
-            return ResponseEntity.ok().build(); // ← sucesso sem payload
+        if (cidadaoOpt.isEmpty()) {
+            return ResponseEntity
+                    .status(401)
+                    .body("Documento não encontrado.");
         }
 
-        return ResponseEntity.status(401).body("Documento não encontrado.");
+        return ResponseEntity.ok(cidadaoOpt.get());
     }
 }
