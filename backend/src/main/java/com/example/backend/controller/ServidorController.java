@@ -1,8 +1,8 @@
 package com.example.backend.controller;
 
-
 import com.example.backend.dto.ServidorDTO;
 import com.example.backend.service.ServidorService;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -16,18 +16,20 @@ public class ServidorController {
     }
 
     @PostMapping("/cadastrar")
-    public String cadastrar(@RequestBody ServidorDTO dto) {
+    public ResponseEntity<?> cadastrar(@RequestBody ServidorDTO dto) {
         service.cadastrarServidor(dto);
-        return "Servidor cadastrado com sucesso!";
+        return ResponseEntity.ok("Servidor cadastrado com sucesso!");
     }
 
     @PostMapping("/login")
-    public String login(@RequestParam String login,
-                        @RequestParam String senha) {
+    public ResponseEntity<?> login(@RequestBody ServidorDTO dto) {
 
-        if (service.autenticar(login, senha)) {
-            return "Acesso permitido.";
+        boolean autenticado = service.autenticarPorMatricula(dto.getMatricula());
+
+        if (autenticado) {
+            return ResponseEntity.ok("Acesso permitido.");
         }
-        return "Login ou senha inválidos.";
+
+        return ResponseEntity.status(401).body("Matrícula não encontrada.");
     }
 }

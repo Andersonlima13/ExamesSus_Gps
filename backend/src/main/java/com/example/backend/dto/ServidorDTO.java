@@ -9,6 +9,5 @@ public class ServidorDTO {
     private UnidadeSaude unidade;
     private String matricula;
 
-    public void setMatricula(String matricula){matricula = this.matricula;}
 
 }

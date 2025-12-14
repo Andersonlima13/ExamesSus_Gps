@@ -6,17 +6,25 @@ import lombok.Data;
 
 @Entity
 @Data
+@Table(
+        name = "servidor",
+        uniqueConstraints = {
+                @UniqueConstraint(columnNames = "matricula")
+        }
+)
 public class Servidor {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(nullable = false)
     private String nome;
 
     @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
     private UnidadeSaude unidade;
 
-    private String login;
-    private String senha;
+    @Column(nullable = false, unique = true)
+    private String matricula;
 }

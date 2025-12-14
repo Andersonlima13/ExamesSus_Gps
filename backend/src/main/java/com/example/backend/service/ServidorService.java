@@ -1,6 +1,5 @@
 package com.example.backend.service;
 
-
 import com.example.backend.dto.ServidorDTO;
 import com.example.backend.model.Servidor;
 import com.example.backend.repository.ServidorRepository;
@@ -19,14 +18,12 @@ public class ServidorService {
         Servidor s = new Servidor();
         s.setNome(dto.getNome());
         s.setUnidade(dto.getUnidade());
-        s.setLogin(dto.getLogin());
-        s.setSenha(dto.getSenha());
+        s.setMatricula(dto.getMatricula());
+
         return repository.save(s);
     }
 
-    public boolean autenticar(String login, String senha) {
-        return repository.findByLogin(login)
-                .filter(user -> user.getSenha().equals(senha))
-                .isPresent();
+    public boolean autenticarPorMatricula(String matricula) {
+        return repository.findByMatricula(matricula).isPresent();
     }
 }
