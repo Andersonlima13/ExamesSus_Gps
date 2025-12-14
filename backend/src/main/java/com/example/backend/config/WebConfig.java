@@ -13,14 +13,11 @@ public class WebConfig {
         return new WebMvcConfigurer() {
             @Override
             public void addCorsMappings(CorsRegistry registry) {
-
-                registry.addMapping("/**") // Permite todas as rotas da API
-                        .allowedOrigins(
-                                "https://exames-sus-gps.vercel.app"
-                        )
+                registry.addMapping("/**")
+                        .allowedOrigins("https://exames-sus-gps.vercel.app")
                         .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
                         .allowedHeaders("*")
-                        .allowCredentials(true)   // Permite cookies, tokens, session
+                        .allowCredentials(true)
                         .maxAge(3600);
             }
         };
