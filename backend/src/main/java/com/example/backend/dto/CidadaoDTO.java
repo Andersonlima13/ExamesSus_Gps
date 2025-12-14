@@ -8,6 +8,5 @@ public class CidadaoDTO {
     private String documento;
 
 
-    public void setDocumento(String documento) { this.documento = documento; }
 
 }

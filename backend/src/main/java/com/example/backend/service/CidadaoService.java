@@ -23,7 +23,7 @@ public class CidadaoService {
         return repository.save(c);
     }
 
-    // 🔹 NOVO MÉTODO PARA LOGIN
+    // NOVO MÉTODO PARA LOGIN
     public Optional<CidadaoDTO> buscarPorDocumento(String documento) {
         return repository.findByDocumento(documento)
                 .map(cidadao -> {
@@ -33,4 +33,5 @@ public class CidadaoService {
                     return dto;
                 });
     }
+
 }
