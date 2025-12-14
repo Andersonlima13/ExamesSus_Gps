@@ -1,10 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import styled, { createGlobalStyle } from 'styled-components';
 import NavBar from '../components/NavBar';
 import { useLocation } from 'react-router-dom';
 
-import { cadastrarCidadao } from '../services/servidorService';
-import { cadastrarExame } from '../services/exameService';
+import CadastroExameModal from "../components/CadastroExameModal";
+import CadastrarUsuarioModal from "../components/CadastrarUsuarioModal";
 import { listarCidadaos } from '../services/cidadaoService';
 
 /* ---------------- FONT ---------------- */
@@ -100,52 +100,10 @@ export default function Exame() {
   const location = useLocation();
   const servidor = location.state?.servidor;
 
-  /* ---- cidadão ---- */
   const [showCidadaoModal, setShowCidadaoModal] = useState(false);
-  const [nome, setNome] = useState('');
-  const [documento, setDocumento] = useState('');
-
-  /* ---- exame ---- */
   const [showExameModal, setShowExameModal] = useState(false);
-  const [cidadaos, setCidadaos] = useState([]);
-  const [documentoCidadao, setDocumentoCidadao] = useState('');
-  const [tipoExame, setTipoExame] = useState('');
-  const [data, setData] = useState('');
-  const [horario, setHorario] = useState('');
-
-  /* ---- carregar cidadãos ---- */
-  useEffect(() => {
-    async function carregar() {
-      const lista = await listarCidadaos();
-      setCidadaos(lista);
-    }
-    carregar();
-  }, []);
 
   if (!servidor) return <p>Acesso não autorizado.</p>;
-
-  async function handleCadastrarCidadao() {
-    const result = await cadastrarCidadao(nome, documento);
-    alert(result.message);
-    setShowCidadaoModal(false);
-    setNome('');
-    setDocumento('');
-  }
-
-  async function handleCadastrarExame() {
-    const result = await cadastrarExame({
-      documentoCidadao,
-      tipoExame,
-      data,
-      horario
-    });
-
-    alert(result.message);
-    setShowExameModal(false);
-    setTipoExame('');
-    setData('');
-    setHorario('');
-  }
 
   return (
     <PageRoot>
@@ -178,60 +136,12 @@ export default function Exame() {
         </ListCard>
       </PageContent>
 
-      {/* -------- MODAL EXAME -------- */}
       {showExameModal && (
-        <Modal>
-          <ModalCard>
-            <h3>Agendar Exame</h3>
-
-            <Label>Paciente</Label>
-            <Select
-              value={documentoCidadao}
-              onChange={e => setDocumentoCidadao(e.target.value)}
-            >
-              <option value="">Selecione o paciente</option>
-              {cidadaos.map(c => (
-                <option key={c.documento} value={c.documento}>
-                  {c.nome} – {c.documento}
-                </option>
-              ))}
-            </Select>
-
-            <Label>Tipo de Exame</Label>
-            <Input value={tipoExame} onChange={e => setTipoExame(e.target.value)} />
-
-            <Label>Data</Label>
-            <Input type="date" value={data} onChange={e => setData(e.target.value)} />
-
-            <Label>Horário</Label>
-            <Input type="time" value={horario} onChange={e => setHorario(e.target.value)} />
-
-            <ModalActions>
-              <Btn onClick={() => setShowExameModal(false)}>Cancelar</Btn>
-              <Btn primary onClick={handleCadastrarExame}>Salvar</Btn>
-            </ModalActions>
-          </ModalCard>
-        </Modal>
+        <CadastroExameModal onClose={() => setShowExameModal(false)} />
       )}
 
-      {/* -------- MODAL CIDADÃO -------- */}
       {showCidadaoModal && (
-        <Modal>
-          <ModalCard>
-            <h3>Cadastrar Cidadão</h3>
-
-            <Label>Nome</Label>
-            <Input value={nome} onChange={e => setNome(e.target.value)} />
-
-            <Label>Documento</Label>
-            <Input value={documento} onChange={e => setDocumento(e.target.value)} />
-
-            <ModalActions>
-              <Btn onClick={() => setShowCidadaoModal(false)}>Cancelar</Btn>
-              <Btn success onClick={handleCadastrarCidadao}>Cadastrar</Btn>
-            </ModalActions>
-          </ModalCard>
-        </Modal>
+        <CadastrarUsuarioModal onClose={() => setShowCidadaoModal(false)} />
       )}
     </PageRoot>
   );
