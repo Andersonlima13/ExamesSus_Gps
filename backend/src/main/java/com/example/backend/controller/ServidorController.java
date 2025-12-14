@@ -17,17 +17,22 @@ public class ServidorController {
     }
 
     @PostMapping("/cadastrar")
-    public ResponseEntity<?> cadastrar(@RequestBody ServidorDTO dto) {
+    public ResponseEntity<Void> cadastrar(@RequestBody ServidorDTO dto) {
         service.cadastrarServidor(dto);
         return ResponseEntity.ok().build();
     }
 
     @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody ServidorDTO dto) {
+    public ResponseEntity<Object> login(@RequestBody ServidorDTO dto) {
 
         return service.buscarPorMatricula(dto.getMatricula())
-                .map(servidor -> ResponseEntity.ok(toDTO(servidor)))
-                .orElse(ResponseEntity.status(401).body("Matrícula não encontrada."));
+                .<ResponseEntity<Object>>map(servidor ->
+                        ResponseEntity.ok(toDTO(servidor))
+                )
+                .orElseGet(() ->
+                        ResponseEntity.status(401)
+                                .body("Matrícula não encontrada.")
+                );
     }
 
     private ServidorDTO toDTO(Servidor servidor) {
