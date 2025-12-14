@@ -2,13 +2,11 @@ import React, { useState } from 'react';
 import styled from 'styled-components';
 import NavBar from '../components/NavBar';
 import Button from '../components/Button';
-import Exame from './Exame';
-import ServerContext from './ServerContext';
 import { useNavigate } from "react-router-dom";
 import { loginCidadao, loginServidor } from "../services/authService";
-import { redirect } from 'react-router-dom';
+import ServerContext from './ServerContext';
 
-// -------------------- ESTILOS (igual ao seu) --------------------
+// -------------------- ESTILOS --------------------
 const LoginHero = styled.div`
   display: flex;
   justify-content: center;
@@ -43,14 +41,11 @@ const Avatar = styled.div`
 const Title = styled.h2`
   font-size: 2rem;
   font-weight: bold;
-  margin: 0 0 8px 0;
-  text-align: center;
+  margin-bottom: 8px;
 `;
 const Subtitle = styled.p`
   color: #6b7280;
-  font-size: 1rem;
   margin-bottom: 18px;
-  text-align: center;
 `;
 const Tabs = styled.div`
   display: flex;
@@ -59,15 +54,11 @@ const Tabs = styled.div`
 `;
 const Tab = styled.button`
   flex: 1;
-  background: ${props => props.active ? '#fff' : '#f3f4f6'};
-  color: ${props => props.active ? '#2b6df6' : '#222'};
+  background: ${p => p.active ? '#fff' : '#f3f4f6'};
   border: 1px solid #e5e7eb;
-  border-bottom: ${props => props.active ? '2px solid #2b6df6' : '1px solid #e5e7eb'};
-  border-radius: 8px 8px 0 0;
-  padding: 12px 0;
+  border-bottom: ${p => p.active ? '2px solid #2b6df6' : '1px solid #e5e7eb'};
+  padding: 12px;
   cursor: pointer;
-  font-weight: 500;
-  transition: background 0.2s;
 `;
 const FormGroup = styled.div`
   margin-bottom: 16px;
@@ -76,29 +67,23 @@ const FormGroup = styled.div`
 const FormLabel = styled.label`
   display: block;
   margin-bottom: 4px;
-  font-weight: 500;
 `;
 const FormInput = styled.input`
   padding: 12px;
   border: 1px solid #e5e7eb;
   border-radius: 6px;
   width: 100%;
-  font-size: 1rem;
 `;
 
-
-// -------------------- COMPONENTE PRINCIPAL --------------------
+// -------------------- COMPONENTE --------------------
 export default function Login() {
   const navigate = useNavigate();
   const [mode, setMode] = useState("cidadao");
 
-  // Cidadão
   const [cpf, setCpf] = useState("");
-
-  // Servidor
   const [serverId, setServerId] = useState("");
 
-  // ---------------------- LOGIN CIDADÃO ----------------------
+  // -------- LOGIN CIDADÃO --------
   async function submitCidadao(e) {
     e.preventDefault();
 
@@ -109,14 +94,19 @@ export default function Login() {
 
     const result = await loginCidadao(cpf);
 
-    if (result.success) {
-      navigate("/home/exame");
+    if (result.success && result.cidadao) {
+      navigate("/home/exame", {
+        state: {
+          nome: result.cidadao.nome,
+          documento: result.cidadao.documento
+        }
+      });
     } else {
-      alert(result.message || "CPF inválido ou não encontrado.");
+      alert(result.message || "Documento não encontrado.");
     }
   }
 
-  // ---------------------- LOGIN SERVIDOR ----------------------
+  // -------- LOGIN SERVIDOR --------
   async function submitServidor(e) {
     e.preventDefault();
 
@@ -128,13 +118,11 @@ export default function Login() {
     const result = await loginServidor(serverId);
 
     if (result.success && result.servidor) {
-      // salva dados do servidor (contexto, localStorage ou state global)
-      localStorage.setItem(
-        "servidor",
-        JSON.stringify(result.servidor)
-      );
-
-      navigate("/home/agendamento");
+      navigate("/home/agendamento", {
+        state: {
+          servidor: result.servidor
+        }
+      });
     } else {
       alert(result.message || "Matrícula não encontrada.");
     }
@@ -143,7 +131,6 @@ export default function Login() {
   return (
     <div>
       <NavBar />
-
       <LoginHero>
         <LoginCard>
           <Avatar>👤</Avatar>
@@ -163,15 +150,9 @@ export default function Login() {
             <form onSubmit={submitCidadao}>
               <FormGroup>
                 <FormLabel>CPF ou Cartão SUS</FormLabel>
-                <FormInput
-                  value={cpf}
-                  onChange={e => setCpf(e.target.value)}
-                />
+                <FormInput value={cpf} onChange={e => setCpf(e.target.value)} />
               </FormGroup>
-
-              <Button type="submit" full>
-                Acessar Sistema
-              </Button>
+              <Button type="submit" full>Acessar Sistema</Button>
             </form>
           )}
 
@@ -179,15 +160,9 @@ export default function Login() {
             <form onSubmit={submitServidor}>
               <FormGroup>
                 <FormLabel>Matrícula do Servidor</FormLabel>
-                <FormInput
-                  value={serverId}
-                  onChange={e => setServerId(e.target.value)}
-                />
+                <FormInput value={serverId} onChange={e => setServerId(e.target.value)} />
               </FormGroup>
-
-              <Button type="submit" full>
-                Acessar como Servidor
-              </Button>
+              <Button type="submit" full>Acessar como Servidor</Button>
             </form>
           )}
         </LoginCard>

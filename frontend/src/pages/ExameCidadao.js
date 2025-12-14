@@ -1,6 +1,7 @@
 import React from 'react';
 import styled, { createGlobalStyle } from 'styled-components';
 import NavBar from '../components/NavBar';
+import { useLocation } from 'react-router-dom';
 
 const UbuntuFont = createGlobalStyle`
   @import url('https://fonts.googleapis.com/css2?family=Ubuntu:wght@400;500;700&display=swap');
@@ -27,7 +28,7 @@ const Card = styled.section`
   background: #fff;
   border-radius: 12px;
   box-shadow: 0 8px 24px rgba(0,0,0,0.06);
-  padding: 32px 32px 24px 32px;
+  padding: 32px;
   margin-bottom: 28px;
   position: relative;
 `;
@@ -54,148 +55,55 @@ const CardDesc = styled.p`
   font-size: 1.08rem;
 `;
 
-const SectionTitle = styled.h3`
-  font-size: 1.18rem;
-  font-weight: 700;
-  margin-bottom: 18px;
-`;
-
-const Empty = styled.div`
-  text-align: center;
-  color: #6b7280;
-  padding: 48px 0 36px 0;
-`;
-
-const EmptyIco = styled.div`
-  font-size: 44px;
-  margin-bottom: 12px;
-  color: #b3b3b3;
-`;
-
-const HistoryList = styled.div`
-  border-radius: 8px;
-  border: 1px solid #e5e7eb;
-  background: #fcfcfc;
-  margin-top: 10px;
-`;
-
-const HistoryItem = styled.div`
-  display: flex;
-  align-items: center;
-  padding: 18px 18px 12px 18px;
-  border-bottom: 1px solid #f3f4f6;
-  &:last-child {
-    border-bottom: none;
-  }
-  @media (max-width: 600px) {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 8px;
-  }
-`;
-
-const ExamInfo = styled.div`
-  flex: 1;
-`;
-
-const ExamName = styled.div`
-  font-weight: 600;
-  font-size: 1rem;
-`;
-
-const ExamUnit = styled.div`
-  color: #6b7280;
-  font-size: 0.98rem;
-`;
-
-const ExamDate = styled.div`
-  color: #6b7280;
-  font-size: 0.97rem;
-  margin-top: 6px;
-  display: flex;
-  align-items: center;
-  gap: 6px;
-`;
-
-const Status = styled.span`
-  background: #fee2e2;
-  color: #dc2626;
-  border-radius: 16px;
-  font-size: 0.93rem;
-  padding: 4px 16px;
-  margin-left: 16px;
-  font-weight: 500;
-`;
-
 export default function ExameCidadao() {
-  // Mocked user and exam data
-  const user = {
-    nome: 'João Silva',
-    cpf: '123.456.789-01',
-    cartao: '123 4567 8901 2345'
-  };
+  const location = useLocation();
 
-  const examesAgendados = []; // Nenhum exame agendado
-  const historicoExames = [
-    {
-      id: 1,
-      nome: 'Ultrassom',
-      unidade: 'UBS Vila Nova',
-      data: '2025-11-26',
-      status: 'Cancelado'
-    }
-  ];
+  // Dados vindos do login
+  const { nome, documento } = location.state || {};
+
+  if (!documento) {
+    return (
+      <PageRoot>
+        <NavBar />
+        <PageContent>
+          <Card>
+            <CardTitle>Erro de acesso</CardTitle>
+            <CardDesc>Dados do cidadão não encontrados.</CardDesc>
+          </Card>
+        </PageContent>
+      </PageRoot>
+    );
+  }
 
   return (
     <PageRoot>
       <UbuntuFont />
       <NavBar />
       <PageContent>
-        <Card style={{marginBottom: 32}}>
-          <CardTitle>Olá, {user.nome}!</CardTitle>
-          <CardDesc>Acompanhe seus exames e mantenha-se informado sobre sua saúde.</CardDesc>
+        <Card>
+          <CardTitle>Olá, {nome}!</CardTitle>
+          <CardDesc>
+            Acompanhe seus exames e mantenha-se informado sobre sua saúde.
+          </CardDesc>
+
           <CardMeta>
-            CPF: {user.cpf}<br/>
-            Cartão SUS: {user.cartao}
+            Documento:<br />
+            {documento}
           </CardMeta>
         </Card>
 
+        {/* Próximos Exames */}
         <Card>
-          <SectionTitle>Próximos Exames</SectionTitle>
-          {examesAgendados.length === 0 ? (
-            <Empty>
-              <EmptyIco>📅</EmptyIco>
-              <div style={{fontWeight: 600, fontSize: '1.1rem'}}>Nenhum exame agendado</div>
-              <div style={{marginTop: 8, fontSize: '1rem'}}>Você não possui exames agendados no momento.<br/>Procure uma unidade de saúde para agendar seus exames.</div>
-            </Empty>
-          ) : (
-            // Render future exams here
-            <div>...</div>
-          )}
+          <h3>Próximos Exames</h3>
+          <p>Nenhum exame agendado.</p>
         </Card>
 
+        {/* Histórico */}
         <Card>
-          <SectionTitle>Histórico de Exames</SectionTitle>
-          <HistoryList>
-            {historicoExames.map(exame => (
-              <HistoryItem key={exame.id}>
-                <ExamInfo>
-                  <ExamName>{exame.nome}</ExamName>
-                  <ExamUnit>{exame.unidade}</ExamUnit>
-                  <ExamDate>
-                    <span role="img" aria-label="calendar">📅</span>
-                    {new Date(exame.data).toLocaleDateString('pt-BR')}
-                  </ExamDate>
-                </ExamInfo>
-                {exame.status === 'Cancelado' && (
-                  <Status>Cancelado</Status>
-                )}
-              </HistoryItem>
-            ))}
-          </HistoryList>
+          <h3>Histórico de Exames</h3>
+          <p>Nenhum exame encontrado.</p>
         </Card>
       </PageContent>
- 
     </PageRoot>
   );
 }

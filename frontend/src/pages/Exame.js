@@ -1,7 +1,7 @@
 import React, { useState, useContext } from 'react';
 import styled, { createGlobalStyle } from 'styled-components';
 import NavBar from '../components/NavBar';
-import ServerContext from './ServerContext';
+import { useLocation } from 'react-router-dom';
 
 const UbuntuFont = createGlobalStyle`
   @import url('https://fonts.googleapis.com/css2?family=Ubuntu:wght@400;500;700&display=swap');
@@ -126,9 +126,10 @@ const Label = styled.label`
 `;
 
 export default function Exame() {
-  const server = useContext(ServerContext);
+  const location = useLocation();
+  const servidor = location.state?.servidor;
 
-  if (!server) {
+  if (!servidor) {
     return <p>Acesso não autorizado.</p>;
   }
 
@@ -143,13 +144,14 @@ export default function Exame() {
             <p>Gerencie exames e cadastre novos usuários no sistema.</p>
 
             <HeroMeta>
-              <strong>Servidor:</strong> {server.nome}<br />
-              <strong>Unidade:</strong> {server.unidade}
+              <strong>Servidor:</strong> {servidor.nome}<br />
+              <strong>Unidade:</strong> {servidor.unidade}<br />
+              <strong>Matrícula:</strong> {servidor.matricula}
             </HeroMeta>
           </HeroCard>
         </Hero>
 
-        {/* resto do código permanece igual */}
+        {/* restante da tela permanece igual */}
       </PageContent>
     </PageRoot>
   );
