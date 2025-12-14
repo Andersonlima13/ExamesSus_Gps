@@ -86,22 +86,16 @@ const FormInput = styled.input`
   font-size: 1rem;
 `;
 
-const SmallMuted = styled.div`
-  color: #6b7280;
-  font-size: 13px;
-  margin-bottom: 8px;
-`;
 
 // -------------------- COMPONENTE PRINCIPAL --------------------
 export default function Login() {
-  const [mode, setMode] = useState('cidadao');
+  const [mode, setMode] = useState("cidadao");
 
   // Cidadão
-  const [cpf, setCpf] = useState('');
+  const [cpf, setCpf] = useState("");
 
   // Servidor
-  const [serverId, setServerId] = useState('');
-
+  const [serverId, setServerId] = useState("");
 
   const [serverLogged, setServerLogged] = useState(false);
   const [serverData, setServerData] = useState(null);
@@ -119,8 +113,7 @@ export default function Login() {
 
     if (result.success && result.message.includes("Acesso permitido")) {
       alert("Login de cidadão realizado com sucesso!");
-      redirect('/exame');
-      // redirecionamento quando você desejar
+      redirect("/exame");
     } else {
       alert("CPF inválido ou não encontrado.");
     }
@@ -130,16 +123,22 @@ export default function Login() {
   async function submitServidor(e) {
     e.preventDefault();
 
+    if (!serverId.trim()) {
+      alert("Informe a matrícula.");
+      return;
+    }
 
-
-    // aqui usamos ID como login e NOME como senha temporária
     const result = await loginServidor(serverId);
 
-    if (result.success && result.message.includes("Acesso permitido")) {
-      setServerData({ id: serverId});
+    if (result.success && result.servidor) {
+      setServerData({
+        id: result.servidor.id,
+        nome: result.servidor.nome,
+        unidade: result.servidor.unidade
+      });
       setServerLogged(true);
     } else {
-      alert("ID ou credenciais inválidas.");
+      alert("Matrícula não encontrada.");
     }
   }
 
@@ -157,51 +156,48 @@ export default function Login() {
       <NavBar />
       <LoginHero>
         <LoginCard>
-          <Avatar><span role="img" aria-label="avatar">👤</span></Avatar>
+          <Avatar>👤</Avatar>
           <Title>Bem-vindo ao ExameSUS</Title>
           <Subtitle>Acesse suas informações de exames do SUS</Subtitle>
 
           <Tabs>
-            <Tab active={mode === 'cidadao'} onClick={() => setMode('cidadao')}>Cidadão</Tab>
-            <Tab active={mode === 'servidor'} onClick={() => setMode('servidor')}>Servidor</Tab>
+            <Tab active={mode === "cidadao"} onClick={() => setMode("cidadao")}>
+              Cidadão
+            </Tab>
+            <Tab active={mode === "servidor"} onClick={() => setMode("servidor")}>
+              Servidor
+            </Tab>
           </Tabs>
 
           {/* ---------- FORM CIDADÃO ---------- */}
-          {mode === 'cidadao' && (
-            <form onSubmit={submitCidadao} style={{ width: '100%' }}>
+          {mode === "cidadao" && (
+            <form onSubmit={submitCidadao}>
               <FormGroup>
                 <FormLabel>CPF ou Cartão SUS</FormLabel>
                 <FormInput
-                  placeholder="Digite seu CPF ou Cartão SUS"
                   value={cpf}
                   onChange={e => setCpf(e.target.value)}
                 />
               </FormGroup>
 
-              <SmallMuted>Você pode usar qualquer documento para acessar.</SmallMuted>
-
-              <Button type="submit" variant="primary" full>
+              <Button type="submit" full>
                 Acessar Sistema
               </Button>
             </form>
           )}
 
           {/* ---------- FORM SERVIDOR ---------- */}
-          {mode === 'servidor' && (
-            <form onSubmit={submitServidor} style={{ width: '100%' }}>
+          {mode === "servidor" && (
+            <form onSubmit={submitServidor}>
               <FormGroup>
-                <FormLabel>Matricula do Servidor</FormLabel>
+                <FormLabel>Matrícula do Servidor</FormLabel>
                 <FormInput
-                  placeholder="Digite sua matrícula"
                   value={serverId}
                   onChange={e => setServerId(e.target.value)}
                 />
               </FormGroup>
 
-          
-
-
-              <Button type="submit" variant="primary" full>
+              <Button type="submit" full>
                 Acessar como Servidor
               </Button>
             </form>

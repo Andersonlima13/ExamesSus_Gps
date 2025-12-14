@@ -1,28 +1,43 @@
-import api from "../lib/api"
+import api from "../lib/api";
+
 // -----------------------
 // LOGIN CIDADÃO
 // -----------------------
 export async function loginCidadao(documento) {
   try {
-    const response = await api.post(`/cidadao/login`, {
-       documento: documento
+    const response = await api.post("/cidadao/login", {
+      documento
     });
 
-    return { success: true, message: response.data };
+    return {
+      success: true,
+      message: response.data
+    };
   } catch (err) {
-    return { success: false, message: "Erro ao tentar autenticar cidadão." };
+    return {
+      success: false,
+      message: "Erro ao tentar autenticar cidadão."
+    };
   }
 }
 
-
-export async function loginServidor(login, senha) {
+// -----------------------
+// LOGIN SERVIDOR
+// -----------------------
+export async function loginServidor(matricula) {
   try {
-    const response = await api.post(`/servidor/login`, null, {
-      params: { login, senha }
+    const response = await api.post("/servidor/login", {
+      matricula
     });
 
-    return { success: true, message: response.data };
+    return {
+      success: true,
+      servidor: response.data
+    };
   } catch (err) {
-    return { success: false, message: "Erro ao tentar autenticar servidor." };
+    return {
+      success: false,
+      message: "Erro ao tentar autenticar servidor."
+    };
   }
 }
