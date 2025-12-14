@@ -1,30 +1,38 @@
 package com.example.backend.service;
 
-import com.example.backend.dto.ServidorDTO;
+import com.example.backend.dto.CidadaoDTO;
 import com.example.backend.model.Servidor;
 import com.example.backend.repository.ServidorRepository;
 import org.springframework.stereotype.Service;
 
-import java.util.Optional;
-
 @Service
 public class ServidorService {
 
-    private final ServidorRepository repository;
+    private final ServidorRepository servidorRepository;
+    private final CidadaoService cidadaoService;
 
-    public ServidorService(ServidorRepository repository) {
-        this.repository = repository;
+    public ServidorService(
+            ServidorRepository servidorRepository,
+            CidadaoService cidadaoService
+    ) {
+        this.servidorRepository = servidorRepository;
+        this.cidadaoService = cidadaoService;
     }
 
-    public Servidor cadastrarServidor(ServidorDTO dto) {
+    public Servidor cadastrarServidor(com.example.backend.dto.ServidorDTO dto) {
         Servidor s = new Servidor();
         s.setNome(dto.getNome());
         s.setUnidade(dto.getUnidade());
         s.setMatricula(dto.getMatricula());
-        return repository.save(s);
+        return servidorRepository.save(s);
     }
 
-    public Optional<Servidor> buscarPorMatricula(String matricula) {
-        return repository.findByMatricula(matricula);
+    public java.util.Optional<Servidor> buscarPorMatricula(String matricula) {
+        return servidorRepository.findByMatricula(matricula);
+    }
+
+    // ✅ NOVO MÉTODO: Servidor cadastra cidadão
+    public void cadastrarCidadao(CidadaoDTO dto) {
+        cidadaoService.cadastrarCidadao(dto);
     }
 }
