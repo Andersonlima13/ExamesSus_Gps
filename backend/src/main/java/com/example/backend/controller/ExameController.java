@@ -1,6 +1,7 @@
 package com.example.backend.controller;
 
 import com.example.backend.dto.ExameDTO;
+import com.example.backend.model.Exame;
 import com.example.backend.service.ExameService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -21,7 +22,7 @@ public class ExameController {
     // SERVIDOR CADASTRA EXAME
     // ---------------------------
     @PostMapping("/cadastrar")
-    public ResponseEntity<ExameDTO> cadastrar(@RequestBody ExameDTO dto) {
+    public ResponseEntity<Exame> cadastrar(@RequestBody ExameDTO dto) {
         return ResponseEntity.ok(service.cadastrarExame(dto));
     }
 
