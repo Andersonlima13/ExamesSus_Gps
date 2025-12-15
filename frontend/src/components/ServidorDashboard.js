@@ -1,4 +1,4 @@
-// src/pages/ServidorDashboard.jsx
+// src/components/ServidorDashboard.jsx
 import { useState } from "react";
 import ActionButton from "../components/ActionButton";
 import CadastrarUsuarioModal from "../components/CadastrarUsuarioModal";

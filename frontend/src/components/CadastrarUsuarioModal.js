@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { cadastrarCidadao } from "../services/servidorService";
+import Modal from "./Modal";
 
 export default function CadastrarUsuarioModal({ onClose }) {
   const [nome, setNome] = useState("");
@@ -7,17 +8,12 @@ export default function CadastrarUsuarioModal({ onClose }) {
 
   const handleSubmit = async () => {
     const result = await cadastrarCidadao(nome, documento);
-
     alert(result.message);
-
-    if (result.success) {
-      onClose();
-    }
+    if (result.success) onClose();
   };
 
-
   return (
-    <div className="modal">
+    <Modal>
       <h3>Cadastrar Cidadão</h3>
 
       <input
@@ -32,8 +28,8 @@ export default function CadastrarUsuarioModal({ onClose }) {
         onChange={(e) => setDocumento(e.target.value)}
       />
 
-       <button onClick={handleSubmit}>Salvar</button>
+      <button onClick={handleSubmit}>Salvar</button>
       <button onClick={onClose}>Cancelar</button>
-    </div>
+    </Modal>
   );
 }
