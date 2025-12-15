@@ -124,13 +124,13 @@ export default function Exame() {
 
       {showExameModal && (
         <CadastroExameModal
-          servidorId={servidor.id}
-          onClose={() => setShowExameModal(false)}
-          onSuccess={() => {
-            setShowExameModal(false);
-            carregarExames();
-          }}
-        />
+  servidorMatricula={servidor.matricula}
+  onClose={() => setShowExameModal(false)}
+  onSuccess={() => {
+    setShowExameModal(false);
+    carregarExames();
+  }}
+/>
       )}
 
       {showCidadaoModal && (

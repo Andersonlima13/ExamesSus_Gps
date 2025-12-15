@@ -14,7 +14,11 @@ const Select = styled.select`
   margin-bottom: 12px;
 `;
 
-export default function CadastroExameModal({ onClose, servidorId, onSuccess }) {
+export default function CadastroExameModal({
+  onClose,
+  servidorMatricula,
+  onSuccess
+}) {
   const [cidadaos, setCidadaos] = useState([]);
   const [documentoCidadao, setDocumentoCidadao] = useState("");
   const [tipoExame, setTipoExame] = useState("");
@@ -29,32 +33,31 @@ export default function CadastroExameModal({ onClose, servidorId, onSuccess }) {
     carregar();
   }, []);
 
-const handleSubmit = async () => {
-  if (!documentoCidadao || !tipoExame || !data || !horario) {
-    alert("Preencha todos os campos.");
-    return;
-  }
+  const handleSubmit = async () => {
+    if (!documentoCidadao || !tipoExame || !data || !horario) {
+      alert("Preencha todos os campos.");
+      return;
+    }
 
-  const payload = {
-    documentoCidadao,
-    servidorId: Number(servidorId), // 🔒 garante Long no backend
-    tipoExame,
-    data,
-    horario
+    const payload = {
+      documentoCidadao,
+      servidorMatricula, // ✅ MATRÍCULA
+      tipoExame,
+      data,
+      horario
+    };
+
+    console.log("Payload enviado:", payload);
+
+    const result = await cadastrarExame(payload);
+
+    if (!result.success) {
+      alert(result.message);
+      return;
+    }
+
+    onSuccess();
   };
-
-  console.log("Payload enviado:", payload);
-
-  const result = await cadastrarExame(payload);
-
-  if (!result.success) {
-    alert(result.message);
-    return;
-  }
-
-  onSuccess();
-};
-
 
   return (
     <Modal>

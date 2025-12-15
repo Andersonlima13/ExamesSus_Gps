@@ -30,63 +30,31 @@ public class ExameService {
         this.servidorRepository = servidorRepository;
     }
 
-    // ---------------------------
-    // CADASTRAR EXAME
-    // ---------------------------
-    public Exame cadastrarExame(ExameDTO dto) {
+    public ExameDTO cadastrarExame(ExameDTO dto) {
 
         Cidadao cidadao = cidadaoRepository
                 .findByDocumento(dto.getDocumentoCidadao())
                 .orElseThrow(() -> new RuntimeException("Cidadão não encontrado"));
 
         Servidor servidor = servidorRepository
-                .findById(dto.getServidorId())
+                .findByMatricula(dto.getServidorMatricula())
                 .orElseThrow(() -> new RuntimeException("Servidor não encontrado"));
-
-        LocalDate data;
-        try {
-            data = LocalDate.parse(dto.getData());
-        } catch (DateTimeParseException e) {
-            throw new RuntimeException("Data inválida. Use o formato yyyy-MM-dd");
-        }
 
         Exame exame = new Exame();
         exame.setCidadao(cidadao);
         exame.setServidor(servidor);
         exame.setTipoExame(dto.getTipoExame());
-        exame.setData(data);
+        exame.setData(LocalDate.parse(dto.getData())); // yyyy-MM-dd
         exame.setHorario(dto.getHorario());
 
-        return exameRepository.save(exame);
+        Exame salvo = exameRepository.save(exame);
+        return toDTO(salvo);
     }
 
-    // ---------------------------
-    // LISTAR POR CIDADÃO
-    // ---------------------------
-    public List<ExameDTO> listarPorCidadao(String documento) {
-        return exameRepository.findByCidadaoDocumento(documento)
-                .stream()
-                .map(this::toDTO)
-                .toList();
-    }
-
-    // ---------------------------
-    // LISTAR POR SERVIDOR
-    // ---------------------------
-    public List<ExameDTO> listarPorServidor(Long servidorId) {
-        return exameRepository.findByServidorId(servidorId)
-                .stream()
-                .map(this::toDTO)
-                .toList();
-    }
-
-    // ---------------------------
-    // ENTITY → DTO
-    // ---------------------------
     private ExameDTO toDTO(Exame exame) {
         ExameDTO dto = new ExameDTO();
         dto.setDocumentoCidadao(exame.getCidadao().getDocumento());
-        dto.setServidorId(exame.getServidor().getId());
+        dto.setServidorMatricula(exame.getServidor().getMatricula());
         dto.setTipoExame(exame.getTipoExame());
         dto.setData(exame.getData().toString());
         dto.setHorario(exame.getHorario());
