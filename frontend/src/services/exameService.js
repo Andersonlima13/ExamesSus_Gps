@@ -22,15 +22,21 @@ export async function cadastrarExame({
 
     return {
       success: true,
-      data: response.data
+      data: response.data,
+      message: "Exame cadastrado com sucesso."
     };
   } catch (err) {
+    const backendMessage =
+      err.response?.data?.message ||
+      err.response?.data ||
+      "Erro ao cadastrar exame.";
+
     return {
       success: false,
       message:
-        typeof err.response?.data === "string"
-          ? err.response.data
-          : err.response?.data?.message || "Erro ao cadastrar exame."
+        typeof backendMessage === "string"
+          ? backendMessage
+          : "Erro ao cadastrar exame."
     };
   }
 }
@@ -42,7 +48,8 @@ export async function listarExamesPorServidor(servidorId) {
   try {
     const response = await api.get(`/exames/servidor/${servidorId}`);
     return response.data;
-  } catch {
+  } catch (err) {
+    console.error("Erro ao listar exames do servidor:", err);
     return [];
   }
 }
