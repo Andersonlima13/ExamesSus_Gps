@@ -10,6 +10,7 @@ import com.example.backend.repository.ServidorRepository;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.time.format.DateTimeParseException;
 import java.util.List;
 
 @Service
@@ -32,7 +33,7 @@ public class ExameService {
     // ---------------------------
     // CADASTRAR EXAME
     // ---------------------------
-    public ExameDTO cadastrarExame(ExameDTO dto) {
+    public Exame cadastrarExame(ExameDTO dto) {
 
         Cidadao cidadao = cidadaoRepository
                 .findByDocumento(dto.getDocumentoCidadao())
@@ -42,16 +43,21 @@ public class ExameService {
                 .findById(dto.getServidorId())
                 .orElseThrow(() -> new RuntimeException("Servidor não encontrado"));
 
+        LocalDate data;
+        try {
+            data = LocalDate.parse(dto.getData());
+        } catch (DateTimeParseException e) {
+            throw new RuntimeException("Data inválida. Use o formato yyyy-MM-dd");
+        }
+
         Exame exame = new Exame();
         exame.setCidadao(cidadao);
         exame.setServidor(servidor);
         exame.setTipoExame(dto.getTipoExame());
-        exame.setData(LocalDate.parse(dto.getData()));
+        exame.setData(data);
         exame.setHorario(dto.getHorario());
 
-        Exame salvo = exameRepository.save(exame);
-
-        return toDTO(salvo);
+        return exameRepository.save(exame);
     }
 
     // ---------------------------
