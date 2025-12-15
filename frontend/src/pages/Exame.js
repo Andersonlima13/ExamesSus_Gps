@@ -77,19 +77,21 @@ export default function Exame() {
   const [showExameModal, setShowExameModal] = useState(false);
   const [exames, setExames] = useState([]);
 
-  if (!servidor) {
-    return <Navigate to="/login" replace />;
-  }
-
   // 🔄 Carrega exames do servidor
   async function carregarExames() {
+    if (!servidor) return;
     const lista = await listarExamesPorServidor(servidor.id);
     setExames(lista);
   }
 
   useEffect(() => {
     carregarExames();
-  }, []);
+  }, [servidor]);
+
+  // 🔐 Proteção de rota (AGORA NO JSX)
+  if (!servidor) {
+    return <Navigate to="/login" replace />;
+  }
 
   return (
     <PageRoot>
@@ -126,7 +128,7 @@ export default function Exame() {
           onClose={() => setShowExameModal(false)}
           onSuccess={() => {
             setShowExameModal(false);
-            carregarExames(); // 🔄 atualiza lista
+            carregarExames();
           }}
         />
       )}

@@ -29,28 +29,32 @@ export default function CadastroExameModal({ onClose, servidorId, onSuccess }) {
     carregar();
   }, []);
 
-  const handleSubmit = async () => {
-    if (!documentoCidadao || !tipoExame || !data || !horario) {
-      alert("Preencha todos os campos.");
-      return;
-    }
+const handleSubmit = async () => {
+  if (!documentoCidadao || !tipoExame || !data || !horario) {
+    alert("Preencha todos os campos.");
+    return;
+  }
 
-    const result = await cadastrarExame({
-      documentoCidadao,
-      servidorId,
-      tipoExame,
-      data,
-      horario
-    });
-
-    if (!result.success) {
-      alert(result.message);
-      return;
-    }
-
-    onSuccess(); 
+  const payload = {
+    documentoCidadao,
+    servidorId: Number(servidorId), // 🔒 garante Long no backend
+    tipoExame,
+    data,
+    horario
   };
-  
+
+  console.log("Payload enviado:", payload);
+
+  const result = await cadastrarExame(payload);
+
+  if (!result.success) {
+    alert(result.message);
+    return;
+  }
+
+  onSuccess();
+};
+
 
   return (
     <Modal>

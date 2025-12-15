@@ -4,21 +4,14 @@ import api from "../lib/api";
 // -----------------------
 // CADASTRAR EXAME
 // -----------------------
-export async function cadastrarExame({
-  documentoCidadao,
-  servidorId,
-  tipoExame,
-  data,
-  horario
-}) {
+export async function cadastrarExame(payload) {
   try {
-    const response = await api.post("/exames/cadastrar", {
-      documentoCidadao,
-      servidorId,
-      tipoExame,
-      data,
-      horario
-    });
+    console.log("POST → /exames/cadastrar", payload);
+
+    const response = await api.post(
+      "/exames/cadastrar",
+      JSON.stringify(payload)
+    );
 
     return {
       success: true,
@@ -26,9 +19,12 @@ export async function cadastrarExame({
       message: "Exame cadastrado com sucesso."
     };
   } catch (err) {
+    console.error("Erro ao cadastrar exame:", err);
+
     const backendMessage =
       err.response?.data?.message ||
       err.response?.data ||
+      err.message ||
       "Erro ao cadastrar exame.";
 
     return {
