@@ -60,4 +60,24 @@ public class ExameService {
         dto.setHorario(exame.getHorario());
         return dto;
     }
+
+
+    public List<ExameDTO> listarPorServidor(String matricula) {
+
+        Servidor servidor = servidorRepository
+                .findByMatricula(matricula)
+                .orElseThrow(() -> new RuntimeException("Servidor não encontrado"));
+
+        return exameRepository
+                .findByServidor(servidor)
+                .stream()
+                .map(this::toDTO)
+                .toList();
+    }
+
+
+
+
+
+
 }

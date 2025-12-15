@@ -1,8 +1,8 @@
 // src/pages/Exame.jsx
-import React, { useEffect, useState } from 'react';
-import styled, { createGlobalStyle } from 'styled-components';
-import { useLocation, Navigate } from 'react-router-dom';
-import NavBar from '../components/NavBar';
+import React, { useEffect, useState } from "react";
+import styled, { createGlobalStyle } from "styled-components";
+import { useLocation, Navigate } from "react-router-dom";
+import NavBar from "../components/NavBar";
 
 import CadastroExameModal from "../components/CadastroExameModal";
 import CadastrarUsuarioModal from "../components/CadastrarUsuarioModal";
@@ -56,10 +56,10 @@ const Btn = styled.button`
   border: none;
   cursor: pointer;
   background: ${p =>
-    p.primary ? '#2b6df6' :
-    p.success ? '#16a34a' :
-    '#fff'};
-  color: ${p => (p.primary || p.success) ? '#fff' : '#222'};
+    p.primary ? "#2b6df6" :
+    p.success ? "#16a34a" :
+    "#fff"};
+  color: ${p => (p.primary || p.success) ? "#fff" : "#222"};
 `;
 
 const ListCard = styled.div`
@@ -77,10 +77,14 @@ export default function Exame() {
   const [showExameModal, setShowExameModal] = useState(false);
   const [exames, setExames] = useState([]);
 
-  // 🔄 Carrega exames do servidor
+  // 🔄 Carrega exames cadastrados pelo servidor
   async function carregarExames() {
-    if (!servidor) return;
-    const lista = await listarExamesPorServidor(servidor.id);
+    if (!servidor?.matricula) return;
+
+    const lista = await listarExamesPorServidor(
+      servidor.matricula
+    );
+
     setExames(lista);
   }
 
@@ -88,7 +92,7 @@ export default function Exame() {
     carregarExames();
   }, [servidor]);
 
-  // 🔐 Proteção de rota (AGORA NO JSX)
+  // 🔐 Proteção de rota
   if (!servidor) {
     return <Navigate to="/login" replace />;
   }
@@ -124,17 +128,19 @@ export default function Exame() {
 
       {showExameModal && (
         <CadastroExameModal
-  servidorMatricula={servidor.matricula}
-  onClose={() => setShowExameModal(false)}
-  onSuccess={() => {
-    setShowExameModal(false);
-    carregarExames();
-  }}
-/>
+          servidorMatricula={servidor.matricula}
+          onClose={() => setShowExameModal(false)}
+          onSuccess={() => {
+            setShowExameModal(false);
+            carregarExames();
+          }}
+        />
       )}
 
       {showCidadaoModal && (
-        <CadastrarUsuarioModal onClose={() => setShowCidadaoModal(false)} />
+        <CadastrarUsuarioModal
+          onClose={() => setShowCidadaoModal(false)}
+        />
       )}
     </PageRoot>
   );

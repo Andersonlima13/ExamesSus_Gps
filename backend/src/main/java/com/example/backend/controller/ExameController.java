@@ -26,7 +26,12 @@ public class ExameController {
     }
 
     // ---------------------------
-    // CIDADÃO LISTA EXAMES
+    // SERVIDOR LISTA SEUS EXAMES
     // ---------------------------
-
+    @GetMapping("/servidor/{matricula}")
+    public ResponseEntity<List<ExameDTO>> listarPorServidor(
+            @PathVariable String matricula
+    ) {
+        return ResponseEntity.ok(service.listarPorServidor(matricula));
+    }
 }

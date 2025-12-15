@@ -32,9 +32,11 @@ export async function cadastrarExame({
 // -----------------------
 // LISTAR EXAMES DO SERVIDOR
 // -----------------------
-export async function listarExamesPorServidor(servidorId) {
+export async function listarExamesPorServidor(servidorMatricula) {
   try {
-    const response = await api.get(`/exames/servidor/${servidorId}`);
+    const response = await api.get(
+      `/exames/servidor/${servidorMatricula}`
+    );
     return response.data;
   } catch (err) {
     console.error("Erro ao listar exames do servidor:", err);
