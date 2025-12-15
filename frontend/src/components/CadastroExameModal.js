@@ -14,7 +14,7 @@ const Select = styled.select`
   margin-bottom: 12px;
 `;
 
-export default function CadastroExameModal({ onClose }) {
+export default function CadastroExameModal({ onClose, servidorId, onSuccess }) {
   const [cidadaos, setCidadaos] = useState([]);
   const [documentoCidadao, setDocumentoCidadao] = useState("");
   const [tipoExame, setTipoExame] = useState("");
@@ -37,14 +37,20 @@ export default function CadastroExameModal({ onClose }) {
 
     const result = await cadastrarExame({
       documentoCidadao,
+      servidorId,
       tipoExame,
       data,
-      horario,
+      horario
     });
 
-    alert(result.message);
-    if (result.success) onClose();
+    if (!result.success) {
+      alert(result.message);
+      return;
+    }
+
+    onSuccess(); 
   };
+  
 
   return (
     <Modal>

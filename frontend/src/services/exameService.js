@@ -1,28 +1,48 @@
+// src/services/exameService.js
 import api from "../lib/api";
 
 // -----------------------
 // CADASTRAR EXAME
 // -----------------------
-export async function cadastrarExame({ documentoCidadao, tipoExame, data, horario }) {
+export async function cadastrarExame({
+  documentoCidadao,
+  servidorId,
+  tipoExame,
+  data,
+  horario
+}) {
   try {
-    await api.post("/exame", {
+    const response = await api.post("/exames/cadastrar", {
       documentoCidadao,
+      servidorId,
       tipoExame,
-      data,      // formato: yyyy-MM-dd
+      data,
       horario
     });
 
     return {
       success: true,
-      message: "Exame cadastrado com sucesso."
+      data: response.data
     };
   } catch (err) {
     return {
       success: false,
-      message: err.response?.data || "Erro ao cadastrar exame."
+      message:
+        typeof err.response?.data === "string"
+          ? err.response.data
+          : err.response?.data?.message || "Erro ao cadastrar exame."
     };
   }
 }
 
-
-
+// -----------------------
+// LISTAR EXAMES DO SERVIDOR
+// -----------------------
+export async function listarExamesPorServidor(servidorId) {
+  try {
+    const response = await api.get(`/exames/servidor/${servidorId}`);
+    return response.data;
+  } catch {
+    return [];
+  }
+}

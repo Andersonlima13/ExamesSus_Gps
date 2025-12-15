@@ -4,8 +4,8 @@ import lombok.Data;
 
 @Data
 public class ExameDTO {
-
     private String documentoCidadao;
+    private Long servidorId;
     private String tipoExame;
     private String data;
     private String horario;

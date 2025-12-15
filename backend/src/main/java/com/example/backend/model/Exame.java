@@ -1,32 +1,27 @@
 package com.example.backend.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.time.LocalDate;
 
 @Entity
-@Data
+@Getter
+@Setter
 public class Exame {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    // muitos exames → um cidadão
-    @ManyToOne(optional = false)
-    @JoinColumn(name = "cidadao_id")
-    @JsonIgnore
-
+    @ManyToOne
     private Cidadao cidadao;
 
-    @Column(nullable = false)
+    @ManyToOne
+    private Servidor servidor; // 🔑 quem cadastrou
+
     private String tipoExame;
-
-    @Column(nullable = false)
     private LocalDate data;
-
-    @Column(nullable = false)
     private String horario;
 }

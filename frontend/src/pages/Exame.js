@@ -1,10 +1,14 @@
-import React, { useState } from 'react';
+// src/pages/Exame.jsx
+import React, { useEffect, useState } from 'react';
 import styled, { createGlobalStyle } from 'styled-components';
 import { useLocation, Navigate } from 'react-router-dom';
 import NavBar from '../components/NavBar';
 
 import CadastroExameModal from "../components/CadastroExameModal";
 import CadastrarUsuarioModal from "../components/CadastrarUsuarioModal";
+import DetalheExame from "./DetalheExame";
+
+import { listarExamesPorServidor } from "../services/exameService";
 
 /* ---------------- FONT ---------------- */
 const UbuntuFont = createGlobalStyle`
@@ -35,8 +39,6 @@ const Hero = styled.section`
   margin-bottom: 18px;
 `;
 
-const HeroCard = styled.div``;
-
 const HeroMeta = styled.div`
   text-align: right;
   color: #6b7280;
@@ -66,12 +68,6 @@ const ListCard = styled.div`
   box-shadow: 0 8px 16px rgba(0,0,0,0.05);
 `;
 
-const Empty = styled.div`
-  padding: 42px;
-  text-align: center;
-  color: #6b7280;
-`;
-
 /* ---------------- COMPONENT ---------------- */
 export default function Exame() {
   const location = useLocation();
@@ -79,11 +75,21 @@ export default function Exame() {
 
   const [showCidadaoModal, setShowCidadaoModal] = useState(false);
   const [showExameModal, setShowExameModal] = useState(false);
+  const [exames, setExames] = useState([]);
 
-  // 🔐 Proteção de rota (evita acesso direto)
   if (!servidor) {
     return <Navigate to="/login" replace />;
   }
+
+  // 🔄 Carrega exames do servidor
+  async function carregarExames() {
+    const lista = await listarExamesPorServidor(servidor.id);
+    setExames(lista);
+  }
+
+  useEffect(() => {
+    carregarExames();
+  }, []);
 
   return (
     <PageRoot>
@@ -92,12 +98,10 @@ export default function Exame() {
 
       <PageContent>
         <Hero>
-          <HeroCard>
-            <h2>Painel do Servidor</h2>
-            <HeroMeta>
-              <strong>{servidor.nome}</strong> – {servidor.unidade}
-            </HeroMeta>
-          </HeroCard>
+          <h2>Painel do Servidor</h2>
+          <HeroMeta>
+            <strong>{servidor.nome}</strong> – {servidor.unidade}
+          </HeroMeta>
         </Hero>
 
         <Actions>
@@ -111,13 +115,20 @@ export default function Exame() {
         </Actions>
 
         <ListCard>
-          <h3>Exames da Unidade</h3>
-          <Empty>Nenhum exame encontrado</Empty>
+          <h3>Exames cadastrados</h3>
+          <DetalheExame exames={exames} />
         </ListCard>
       </PageContent>
 
       {showExameModal && (
-        <CadastroExameModal onClose={() => setShowExameModal(false)} />
+        <CadastroExameModal
+          servidorId={servidor.id}
+          onClose={() => setShowExameModal(false)}
+          onSuccess={() => {
+            setShowExameModal(false);
+            carregarExames(); // 🔄 atualiza lista
+          }}
+        />
       )}
 
       {showCidadaoModal && (
