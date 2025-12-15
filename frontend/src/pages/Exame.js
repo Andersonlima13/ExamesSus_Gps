@@ -5,7 +5,6 @@ import { useLocation } from 'react-router-dom';
 
 import CadastroExameModal from "../components/CadastroExameModal";
 import CadastrarUsuarioModal from "../components/CadastrarUsuarioModal";
-import { listarCidadaos } from '../services/cidadaoService';
 
 /* ---------------- FONT ---------------- */
 const UbuntuFont = createGlobalStyle`
@@ -61,39 +60,7 @@ const Empty = styled.div`
   text-align: center;
   color: #6b7280;
 `;
-const Modal = styled.div`
-  position: fixed;
-  inset: 0;
-  background: rgba(0,0,0,0.35);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-`;
-const ModalCard = styled.div`
-  background: #fff;
-  padding: 18px;
-  border-radius: 8px;
-  width: 420px;
-`;
-const ModalActions = styled.div`
-  display: flex;
-  justify-content: flex-end;
-  gap: 8px;
-  margin-top: 12px;
-`;
-const Input = styled.input`
-  padding: 10px;
-  width: 100%;
-  margin-bottom: 10px;
-`;
-const Select = styled.select`
-  padding: 10px;
-  width: 100%;
-  margin-bottom: 10px;
-`;
-const Label = styled.label`
-  font-size: 14px;
-`;
+
 
 /* ---------------- COMPONENT ---------------- */
 export default function Exame() {

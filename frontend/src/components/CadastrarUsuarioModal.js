@@ -1,16 +1,20 @@
-// src/components/CadastrarUsuarioModal.jsx
 import { useState } from "react";
-import ServidorService from "../services/servidorService";
+import { cadastrarCidadao } from "../services/servidorService";
 
 export default function CadastrarUsuarioModal({ onClose }) {
   const [nome, setNome] = useState("");
   const [documento, setDocumento] = useState("");
 
   const handleSubmit = async () => {
-    await ServidorService.cadastrarUsuario({ nome, documento });
-    alert("Usuário cadastrado com sucesso!");
-    onClose();
+    const result = await cadastrarCidadao(nome, documento);
+
+    alert(result.message);
+
+    if (result.success) {
+      onClose();
+    }
   };
+
 
   return (
     <div className="modal">
@@ -28,7 +32,7 @@ export default function CadastrarUsuarioModal({ onClose }) {
         onChange={(e) => setDocumento(e.target.value)}
       />
 
-      <button onClick={handleSubmit}>Salvar</button>
+       <button onClick={handleSubmit}>Salvar</button>
       <button onClick={onClose}>Cancelar</button>
     </div>
   );

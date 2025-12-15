@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
-import { listarCidadaos } from "../services/cidadaoService";
 import { cadastrarExame } from "../services/exameService";
+import { listarCidadaos } from "../services/cidadaoService";
 
 export default function CadastroExameModal({ onClose }) {
   const [cidadaos, setCidadaos] = useState([]);
@@ -18,15 +18,23 @@ export default function CadastroExameModal({ onClose }) {
   }, []);
 
   const handleSubmit = async () => {
-    await cadastrarExame({
+    if (!documentoCidadao || !tipoExame || !data || !horario) {
+      alert("Preencha todos os campos.");
+      return;
+    }
+
+    const result = await cadastrarExame({
       documentoCidadao,
       tipoExame,
       data,
-      horario
+      horario,
     });
 
-    alert("Exame agendado com sucesso!");
-    onClose();
+    alert(result.message);
+
+    if (result.success) {
+      onClose();
+    }
   };
 
   return (
@@ -38,7 +46,7 @@ export default function CadastroExameModal({ onClose }) {
         onChange={(e) => setDocumentoCidadao(e.target.value)}
       >
         <option value="">Selecione o paciente</option>
-        {cidadaos.map(c => (
+        {cidadaos.map((c) => (
           <option key={c.documento} value={c.documento}>
             {c.nome} – {c.documento}
           </option>

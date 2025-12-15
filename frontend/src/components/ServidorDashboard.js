@@ -2,9 +2,11 @@
 import { useState } from "react";
 import ActionButton from "../components/ActionButton";
 import CadastrarUsuarioModal from "../components/CadastrarUsuarioModal";
+import CadastroExameModal from "../components/CadastroExameModal";
 
 export default function ServidorDashboard() {
-  const [showModal, setShowModal] = useState(false);
+  const [showUsuarioModal, setShowUsuarioModal] = useState(false);
+  const [showExameModal, setShowExameModal] = useState(false);
 
   return (
     <div>
@@ -16,19 +18,23 @@ export default function ServidorDashboard() {
           title="Agendar Exame"
           subtitle="Agendar para paciente"
           color="#2563eb"
-          onClick={() => alert("Abrir agenda")}
+          onClick={() => setShowExameModal(true)}
         />
 
         <ActionButton
           title="Cadastrar Usuário"
           subtitle="Novo cidadão no SUS"
           color="#16a34a"
-          onClick={() => setShowModal(true)}
+          onClick={() => setShowUsuarioModal(true)}
         />
       </div>
 
-      {showModal && (
-        <CadastrarUsuarioModal onClose={() => setShowModal(false)} />
+      {showUsuarioModal && (
+        <CadastrarUsuarioModal onClose={() => setShowUsuarioModal(false)} />
+      )}
+
+      {showExameModal && (
+        <CadastroExameModal onClose={() => setShowExameModal(false)} />
       )}
     </div>
   );

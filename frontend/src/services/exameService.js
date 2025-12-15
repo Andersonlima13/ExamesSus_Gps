@@ -26,11 +26,3 @@ export async function cadastrarExame({ documentoCidadao, tipoExame, data, horari
 
 
 
-export async function listarCidadaos() {
-  try {
-    const response = await api.get("/cidadao");
-    return response.data;
-  } catch (err) {
-    return [];
-  }
-}
