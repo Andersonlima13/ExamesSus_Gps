@@ -1,25 +1,9 @@
 import { useState } from "react";
 import { cadastrarCidadao } from "../services/servidorService";
+import Modal from "./Modal";
 import Button from "./Button";
 import Input from "./Input";
-import styled from "styled-components";
 
-/* ---------- STYLES ---------- */
-const Modal = styled.div`
-  background: white;
-  padding: 24px;
-  border-radius: 10px;
-  width: 420px;
-`;
-
-const Footer = styled.div`
-  display: flex;
-  justify-content: flex-end;
-  gap: 12px;
-  margin-top: 20px;
-`;
-
-/* ---------- COMPONENT ---------- */
 export default function CadastrarUsuarioModal({ onClose }) {
   const [nome, setNome] = useState("");
   const [documento, setDocumento] = useState("");
@@ -54,14 +38,14 @@ export default function CadastrarUsuarioModal({ onClose }) {
         onChange={(e) => setDocumento(e.target.value)}
       />
 
-      <Footer>
+      <div style={{ display: "flex", justifyContent: "flex-end", gap: "10px" }}>
         <Button variant="default" onClick={onClose}>
           Cancelar
         </Button>
         <Button variant="success" onClick={handleSubmit}>
           Salvar
         </Button>
-      </Footer>
+      </div>
     </Modal>
   );
 }
