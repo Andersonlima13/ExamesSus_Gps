@@ -34,4 +34,12 @@ public class ExameController {
     ) {
         return ResponseEntity.ok(service.listarPorServidor(matricula));
     }
+
+    // ✅ CIDADÃO LISTA SEUS EXAMES (POR DOCUMENTO)
+    @GetMapping("/cidadao/{documento}")
+    public ResponseEntity<List<ExameDTO>> listarPorCidadao(
+            @PathVariable String documento
+    ) {
+        return ResponseEntity.ok(service.listarPorCidadao(documento));
+    }
 }

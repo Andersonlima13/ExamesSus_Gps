@@ -17,7 +17,7 @@ export default function SairButton() {
   const navigate = useNavigate();
 
   return (
-    <Sair onClick={() => navigate("/login")}>
+    <Sair onClick={() => navigate("/home")}>
       Sair
     </Sair>
   );

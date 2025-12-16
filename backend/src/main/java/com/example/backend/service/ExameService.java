@@ -10,7 +10,6 @@ import com.example.backend.repository.ServidorRepository;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
-import java.time.format.DateTimeParseException;
 import java.util.List;
 
 @Service
@@ -30,6 +29,9 @@ public class ExameService {
         this.servidorRepository = servidorRepository;
     }
 
+    // ---------------------------
+    // CADASTRAR EXAME
+    // ---------------------------
     public ExameDTO cadastrarExame(ExameDTO dto) {
 
         Cidadao cidadao = cidadaoRepository
@@ -44,24 +46,15 @@ public class ExameService {
         exame.setCidadao(cidadao);
         exame.setServidor(servidor);
         exame.setTipoExame(dto.getTipoExame());
-        exame.setData(LocalDate.parse(dto.getData())); // yyyy-MM-dd
+        exame.setData(LocalDate.parse(dto.getData()));
         exame.setHorario(dto.getHorario());
 
-        Exame salvo = exameRepository.save(exame);
-        return toDTO(salvo);
+        return toDTO(exameRepository.save(exame));
     }
 
-    private ExameDTO toDTO(Exame exame) {
-        ExameDTO dto = new ExameDTO();
-        dto.setDocumentoCidadao(exame.getCidadao().getDocumento());
-        dto.setServidorMatricula(exame.getServidor().getMatricula());
-        dto.setTipoExame(exame.getTipoExame());
-        dto.setData(exame.getData().toString());
-        dto.setHorario(exame.getHorario());
-        return dto;
-    }
-
-
+    // ---------------------------
+    // LISTAR EXAMES DO SERVIDOR
+    // ---------------------------
     public List<ExameDTO> listarPorServidor(String matricula) {
 
         Servidor servidor = servidorRepository
@@ -75,9 +68,32 @@ public class ExameService {
                 .toList();
     }
 
+    // ---------------------------
+    // LISTAR EXAMES DO CIDADÃO ✅
+    // ---------------------------
+    public List<ExameDTO> listarPorCidadao(String documento) {
 
+        cidadaoRepository
+                .findByDocumento(documento)
+                .orElseThrow(() -> new RuntimeException("Cidadão não encontrado"));
 
+        return exameRepository
+                .findByCidadao_Documento(documento)
+                .stream()
+                .map(this::toDTO)
+                .toList();
+    }
 
-
-
+    // ---------------------------
+    // CONVERSOR
+    // ---------------------------
+    private ExameDTO toDTO(Exame exame) {
+        ExameDTO dto = new ExameDTO();
+        dto.setDocumentoCidadao(exame.getCidadao().getDocumento());
+        dto.setServidorMatricula(exame.getServidor().getMatricula());
+        dto.setTipoExame(exame.getTipoExame());
+        dto.setData(exame.getData().toString());
+        dto.setHorario(exame.getHorario());
+        return dto;
+    }
 }

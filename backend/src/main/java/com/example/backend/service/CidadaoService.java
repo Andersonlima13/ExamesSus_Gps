@@ -1,11 +1,8 @@
 package com.example.backend.service;
 
 import com.example.backend.dto.CidadaoDTO;
-import com.example.backend.dto.ExameDTO;
 import com.example.backend.model.Cidadao;
-import com.example.backend.model.Exame;
 import com.example.backend.repository.CidadaoRepository;
-import com.example.backend.repository.ExameRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -16,14 +13,9 @@ import java.util.stream.Collectors;
 public class CidadaoService {
 
     private final CidadaoRepository repository;
-    private final ExameRepository exameRepository;
 
-    public CidadaoService(
-            CidadaoRepository repository,
-            ExameRepository exameRepository
-    ) {
+    public CidadaoService(CidadaoRepository repository) {
         this.repository = repository;
-        this.exameRepository = exameRepository;
     }
 
     // -----------------------
@@ -62,33 +54,5 @@ public class CidadaoService {
                     return dto;
                 })
                 .collect(Collectors.toList());
-    }
-
-    // -----------------------
-    // LISTAR EXAMES DO CIDADÃO ✅
-    // -----------------------
-    public List<ExameDTO> listarPorCidadao(String documento) {
-
-        repository.findByDocumento(documento)
-                .orElseThrow(() -> new RuntimeException("Cidadão não encontrado"));
-
-        return exameRepository
-                .findByCidadao_Documento(documento)
-                .stream()
-                .map(this::toDTO)
-                .toList();
-    }
-
-    // -----------------------
-    // CONVERSOR LOCAL
-    // -----------------------
-    private ExameDTO toDTO(Exame exame) {
-        ExameDTO dto = new ExameDTO();
-        dto.setDocumentoCidadao(exame.getCidadao().getDocumento());
-        dto.setServidorMatricula(exame.getServidor().getMatricula());
-        dto.setTipoExame(exame.getTipoExame());
-        dto.setData(exame.getData().toString());
-        dto.setHorario(exame.getHorario());
-        return dto;
     }
 }
