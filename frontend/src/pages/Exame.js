@@ -108,7 +108,7 @@ export default function Exame() {
 
   /* ---------------- FILTROS ---------------- */
 
-  // pacientes únicos para o select
+  // pacientes únicos (documento + nome)
   const pacientesUnicos = Array.from(
     new Map(
       exames.map(exame => [
@@ -169,12 +169,13 @@ export default function Exame() {
               onChange={e => setFiltroDocumento(e.target.value)}
             >
               <option value="">Todos os pacientes</option>
+
               {pacientesUnicos.map(exame => (
                 <option
                   key={exame.documentoCidadao}
                   value={exame.documentoCidadao}
                 >
-                  {exame.documentoCidadao}
+                  {exame.nomeCidadao} ({exame.documentoCidadao})
                 </option>
               ))}
             </select>

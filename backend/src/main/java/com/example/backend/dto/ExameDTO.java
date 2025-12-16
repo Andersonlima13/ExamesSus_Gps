@@ -7,6 +7,7 @@ import java.time.LocalDate;
 
 @Data
 public class ExameDTO {
+    private String nomeCidadao;   // ✅ NOVO
     private String documentoCidadao;
     private String servidorMatricula; // ✅ MATRÍCULA
     private String tipoExame;

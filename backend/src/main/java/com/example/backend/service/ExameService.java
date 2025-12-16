@@ -91,6 +91,7 @@ public class ExameService {
     private ExameDTO toDTO(Exame exame) {
         ExameDTO dto = new ExameDTO();
         dto.setDocumentoCidadao(exame.getCidadao().getDocumento());
+        dto.setNomeCidadao(exame.getCidadao().getNome()); // ✅ AQUI
         dto.setServidorMatricula(exame.getServidor().getMatricula());
         dto.setTipoExame(exame.getTipoExame());
         dto.setData(exame.getData().toString());
