@@ -6,6 +6,8 @@ import { listarExamesCidadao } from "../services/exameService";
 import DetalheExamePaciente from "./DetalheExamePaciente";
 import SairButton from '../components/SairButton';
 import { useEffect, useState } from 'react';
+
+
 const Header = styled.header`
   background: #fff;
   padding: 14px 24px;
@@ -72,18 +74,17 @@ export default function ExameCidadao() {
 
   const [exames, setExames] = useState([]);
 
-useEffect(() => {
-  if (documento) {
-    listarExamesCidadao(documento).then(setExames);
-  }
-}, [documento]);
-
-
 
   const location = useLocation();
 
   // Dados vindos do login
   const { nome, documento } = location.state || {};
+
+    useEffect(() => {
+    if (documento) {
+      listarExamesCidadao(documento).then(setExames);
+    }
+  }, [documento]);
 
   if (!documento) {
     return (
