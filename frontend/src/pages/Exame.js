@@ -60,7 +60,6 @@ const ActionCard = styled.button`
   cursor: pointer;
   color: #fff;
   text-align: left;
-
   background: ${p => (p.green ? "#16a34a" : "#2563eb")};
 `;
 
@@ -71,6 +70,19 @@ const ListCard = styled.div`
   box-shadow: 0 8px 16px rgba(0,0,0,0.05);
 `;
 
+const FilterRow = styled.div`
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+
+  select {
+    padding: 6px 10px;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+  }
+`;
+
 export default function Exame() {
   const location = useLocation();
   const servidor = location.state?.servidor;
@@ -78,6 +90,7 @@ export default function Exame() {
   const [showCidadaoModal, setShowCidadaoModal] = useState(false);
   const [showExameModal, setShowExameModal] = useState(false);
   const [exames, setExames] = useState([]);
+  const [filtroDocumento, setFiltroDocumento] = useState("");
 
   async function carregarExames() {
     if (!servidor?.matricula) return;
@@ -92,6 +105,25 @@ export default function Exame() {
   if (!servidor) {
     return <Navigate to="/login" replace />;
   }
+
+  /* ---------------- FILTROS ---------------- */
+
+  // pacientes únicos para o select
+  const pacientesUnicos = Array.from(
+    new Map(
+      exames.map(exame => [
+        exame.documentoCidadao,
+        exame
+      ])
+    ).values()
+  );
+
+  // exames filtrados por paciente
+  const examesFiltrados = filtroDocumento
+    ? exames.filter(
+        exame => exame.documentoCidadao === filtroDocumento
+      )
+    : exames;
 
   return (
     <PageRoot>
@@ -128,7 +160,27 @@ export default function Exame() {
 
         <ListCard>
           <h3>Exames da Unidade</h3>
-          <DetalheExame exames={exames} />
+
+          {/* FILTRO POR PACIENTE */}
+          <FilterRow>
+            <label>Filtrar por paciente:</label>
+            <select
+              value={filtroDocumento}
+              onChange={e => setFiltroDocumento(e.target.value)}
+            >
+              <option value="">Todos os pacientes</option>
+              {pacientesUnicos.map(exame => (
+                <option
+                  key={exame.documentoCidadao}
+                  value={exame.documentoCidadao}
+                >
+                  {exame.documentoCidadao}
+                </option>
+              ))}
+            </select>
+          </FilterRow>
+
+          <DetalheExame exames={examesFiltrados} />
         </ListCard>
       </PageContent>
 
@@ -144,7 +196,9 @@ export default function Exame() {
       )}
 
       {showCidadaoModal && (
-        <CadastrarUsuarioModal onClose={() => setShowCidadaoModal(false)} />
+        <CadastrarUsuarioModal
+          onClose={() => setShowCidadaoModal(false)}
+        />
       )}
     </PageRoot>
   );
