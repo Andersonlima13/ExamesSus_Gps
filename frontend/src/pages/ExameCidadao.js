@@ -104,7 +104,7 @@ export default function ExameCidadao() {
     <PageRoot>
       <UbuntuFont />
 
-       <Header>
+            <Header>
               <strong>ExameSUS</strong>
               <div>
                 Cidadao &nbsp; <SairButton />
@@ -112,7 +112,6 @@ export default function ExameCidadao() {
             </Header>
 
 
-      <NavBar />
       <PageContent>
         <Card>
           <CardTitle>Olá, {nome}!</CardTitle>
