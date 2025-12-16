@@ -65,16 +65,15 @@ public class CidadaoService {
     }
 
     // -----------------------
-    // LISTAR EXAMES DO CIDADÃO
+    // LISTAR EXAMES DO CIDADÃO ✅
     // -----------------------
     public List<ExameDTO> listarPorCidadao(String documento) {
 
-        Cidadao cidadao = repository
-                .findByDocumento(documento)
+        repository.findByDocumento(documento)
                 .orElseThrow(() -> new RuntimeException("Cidadão não encontrado"));
 
         return exameRepository
-                .findByCidadao(cidadao)
+                .findByCidadao_Documento(documento)
                 .stream()
                 .map(this::toDTO)
                 .toList();

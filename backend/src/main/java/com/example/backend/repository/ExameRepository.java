@@ -10,5 +10,6 @@ import java.util.List;
 public interface ExameRepository extends JpaRepository<Exame, Long> {
     List<Exame> findByServidor(Servidor servidor);
     List<Exame> findByCidadao(Cidadao cidadao);
+    List<Exame> findByCidadao_Documento(String documento);
 
 }
