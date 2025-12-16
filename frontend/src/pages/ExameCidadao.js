@@ -4,6 +4,17 @@ import NavBar from '../components/NavBar';
 import { useLocation } from 'react-router-dom';
 import { listarExamesCidadao } from "../services/exameService";
 import DetalheExamePaciente from "./DetalheExamePaciente";
+import SairButton from '../components/SairButton';
+import { useEffect, useState } from 'react';
+const Header = styled.header`
+  background: #fff;
+  padding: 14px 24px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 2px solid #22c55e;
+`;
+
 
 const UbuntuFont = createGlobalStyle`
   @import url('https://fonts.googleapis.com/css2?family=Ubuntu:wght@400;500;700&display=swap');
