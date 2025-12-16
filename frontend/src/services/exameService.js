@@ -48,7 +48,7 @@ export async function listarExamesPorServidor(servidorMatricula) {
 
 export async function listarExamesCidadao(documento) {
   try {
-    const response = await api.get(`/cidadao/${documento}`);
+    const response = await api.get(`/exames/cidadao/${documento}`);
     return response.data;
   } catch (err) {
     console.error("Erro ao listar exames do cidadão:", err);
