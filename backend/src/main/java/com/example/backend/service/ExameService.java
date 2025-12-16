@@ -73,16 +73,17 @@ public class ExameService {
     // ---------------------------
     public List<ExameDTO> listarPorCidadao(String documento) {
 
-        cidadaoRepository
+        Cidadao cidadao = cidadaoRepository
                 .findByDocumento(documento)
                 .orElseThrow(() -> new RuntimeException("Cidadão não encontrado"));
 
         return exameRepository
-                .findByCidadao_Documento(documento)
+                .findByCidadao(cidadao)
                 .stream()
                 .map(this::toDTO)
                 .toList();
     }
+
 
     // ---------------------------
     // CONVERSOR

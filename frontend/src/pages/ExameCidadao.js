@@ -91,6 +91,15 @@ useEffect(() => {
   return (
     <PageRoot>
       <UbuntuFont />
+
+       <Header>
+              <strong>ExameSUS</strong>
+              <div>
+                Cidadao &nbsp; <SairButton />
+              </div>
+            </Header>
+
+
       <NavBar />
       <PageContent>
         <Card>

@@ -16,10 +16,12 @@ public class Exame {
     private Long id;
 
     @ManyToOne
+    @JoinColumn(name = "cidadao_id", nullable = false)
     private Cidadao cidadao;
 
     @ManyToOne
-    private Servidor servidor; // 🔑 quem cadastrou
+    @JoinColumn(name = "servidor_id", nullable = false)
+    private Servidor servidor;
 
     private String tipoExame;
     private LocalDate data;
