@@ -1,6 +1,7 @@
     package com.example.backend.controller;
 
     import com.example.backend.dto.CidadaoDTO;
+    import com.example.backend.dto.ExameDTO;
     import com.example.backend.service.CidadaoService;
     import org.springframework.http.ResponseEntity;
     import org.springframework.web.bind.annotation.*;
@@ -36,6 +37,23 @@
 
             return ResponseEntity.ok(cidadaoOpt.get());
         }
+
+
+        @GetMapping("/{documento}")
+        public ResponseEntity<List<ExameDTO>> listarPorCidadao(
+                @PathVariable String documento
+        ) {
+            return ResponseEntity.ok(service.listarPorCidadao(documento));
+        }
+
+
+
+
+
+
+
+
+
 
         // ✅ GET PARA DROPDOWN DE EXAMES
         @GetMapping

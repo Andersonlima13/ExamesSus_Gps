@@ -2,6 +2,8 @@ import React from 'react';
 import styled, { createGlobalStyle } from 'styled-components';
 import NavBar from '../components/NavBar';
 import { useLocation } from 'react-router-dom';
+import { listarExamesCidadao } from "../services/exameService";
+import DetalheExamePaciente from "./DetalheExamePaciente";
 
 const UbuntuFont = createGlobalStyle`
   @import url('https://fonts.googleapis.com/css2?family=Ubuntu:wght@400;500;700&display=swap');
@@ -56,6 +58,17 @@ const CardDesc = styled.p`
 `;
 
 export default function ExameCidadao() {
+
+  const [exames, setExames] = useState([]);
+
+useEffect(() => {
+  if (documento) {
+    listarExamesCidadao(documento).then(setExames);
+  }
+}, [documento]);
+
+
+
   const location = useLocation();
 
   // Dados vindos do login
@@ -94,9 +107,9 @@ export default function ExameCidadao() {
 
         {/* Próximos Exames */}
         <Card>
-          <h3>Próximos Exames</h3>
-          <p>Nenhum exame agendado.</p>
-        </Card>
+  <h3>Seus Exames</h3>
+  <DetalheExamePaciente exames={exames} />
+</Card>
 
         {/* Histórico */}
         <Card>

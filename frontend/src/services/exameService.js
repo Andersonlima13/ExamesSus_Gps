@@ -43,3 +43,15 @@ export async function listarExamesPorServidor(servidorMatricula) {
     return [];
   }
 }
+
+
+
+export async function listarExamesCidadao(documento) {
+  try {
+    const response = await api.get(`/cidadao/${documento}`);
+    return response.data;
+  } catch (err) {
+    console.error("Erro ao listar exames do cidadão:", err);
+    return [];
+  }
+}
